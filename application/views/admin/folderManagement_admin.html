@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AdminLTE 2 | Advanced form elements</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.7 -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/font-awesome/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/Ionicons/css/ionicons.min.css">
+  <!-- daterange picker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap-daterangepicker/daterangepicker.css">
+  <!-- bootstrap datepicker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/plugins/iCheck/all.css">
+  <!-- Bootstrap Color Picker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+  <!-- Bootstrap time Picker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/plugins/timepicker/bootstrap-timepicker.min.css">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/select2/dist/css/select2.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/dist/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/dist/css/skins/_all-skins.min.css">
+  <!-- Google Font -->
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+  <?php 
+    include('header.html');
+  ?>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="header">MAIN NAVIGATION</li>
+        <li>
+          <a href="<?php echo base_url();?>controller_admin/sidebar/home">
+            <i class="fa fa-home"></i> <span>Home</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="<?php echo base_url();?>controller_admin/sidebar/announcement">
+            <i class="fa fa-share"></i> <span>Announcement</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="<?php echo base_url();?>controller_admin/sidebar/request">
+            <i class="fa fa-user"></i>
+            <span>User Request</span>
+            <span class="pull-right-container">
+              <span class="label label-primary pull-left"><?php echo $_SESSION["employeeRequest"]; ?></span>
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="<?php echo base_url();?>controller_admin/sidebar/list">
+            <i class="fa fa-users"></i> <span>List User</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+        </li>
+        <li class="active treeview">
+          <a href="#">
+            <i class="fa fa-folder-open"></i> <span>Data Management</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="active"><a href="<?php echo base_url();?>controller_admin/sidebar/folderManagement"><i class="fa fa-circle-o"></i>Manage Folder</a></li>
+            <li><a href="<?php echo base_url();?>controller_admin/sidebar/fileAddRemove"><i class="fa fa-circle-o"></i>Add / Remove File</a></li>
+            <li><a href="<?php echo base_url();?>controller_admin/sidebar/folderRequest"><i class="fa fa-circle-o"></i>Folder Request</a></li>
+                       
+          </ul>
+        </li>
+        <li>
+          <a href="<?php echo base_url();?>controller_admin/sidebar/logout">
+            <i class="fa fa-power-off"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Main content -->
+    <section class="content">
+      <div class="box box-danger">
+        <div class="box-header with-border">
+          <?php foreach ($thisFolder as $key) {?>
+            <a class="btn btn-box-tool btn-default pull-left" href="<?php echo base_url();?>controller_admin/openFolder/<?php echo $key->id_parent;?>">Up <i class="fa fa-level-up"></i></a>
+            <h3 class="box-title"><?php echo $key->folder;?></h3>
+            <button style="margin-left: 10px" type="button" class="btn btn-box-tool btn-default pull-right" data-toggle="modal" data-target="#modal-deleteFolder"><i class="fa fa-trash"></i> Delete This Folder</button>
+            <button style="margin-left: 10px"  type="button" class="btn btn-box-tool btn-default pull-right" data-toggle="modal" data-target="#modal-addFolder"><i class="fa fa-plus"></i> Add Folder</button>
+            <button type="button" class="btn btn-box-tool btn-default pull-right" data-toggle="modal" data-target="#modal-changeNameFolder"><i class="fa fa-edit"></i> Change Folder Name</button>
+            <div class="modal fade" id="modal-changeNameFolder">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Change Folder Name</h4>
+                  </div>
+                  <?php echo form_open_multipart("controller_admin/changeNameFolder/$key->id_folder");?>
+                    <div class="modal-body">
+                      <div class="form-group">
+                        <label>Folder Name</label>
+                        <input type="text" class="form-control" name="folderName" placeholder="Enter Folder Name" required>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <input type="submit" value="Change Name" class="btn btn-primary"/>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade" id="modal-addFolder">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Add Folder to <?php echo $key->folder;?></h4>
+                  </div>
+                  <?php echo form_open_multipart("controller_admin/addFolder/$key->id_folder");?>
+                    <div class="modal-body">
+                      <div class="form-group">
+                        <label>Folder Name</label>
+                        <input type="text" class="form-control" name="folderName" placeholder="Enter Folder Name" required>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <input type="submit" value="Add Folder" class="btn btn-primary"/>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade" id="modal-deleteFolder">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Are you sure want to delete this folder? - <?php echo $key->folder;?></h4>
+                  </div>
+                  <?php echo form_open_multipart("controller_admin/deleteFolder/$key->id_folder");?>
+                    <div class="modal-body">
+                      <div class="form-group">
+                        <p>If you delete this folder, all of the files and folder inside will be delete as well.</p>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <input type="submit" value="Delete Folder" class="btn btn-danger"/>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close" class="btn btn-primary" value="Close"></button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          <?php } ?>
+        </div>
+        <div class="box-body">
+          <?php 
+            foreach ($childFolder as $key) { ?>
+              <a href="<?php echo base_url();?>controller_admin/openFolder/<?php echo $key->id_folder; ?>">
+                <div class="alert alert-info alert-dismissible">
+                  <h4><i class="icon fa fa-folder"></i><?php echo $key->folder; ?></h4>
+                </div>                
+              </a>
+          <?php
+            }
+          ?>
+        </div>
+      </div>
+    </section>
+  </div>
+  <?php
+    include('footer.html');
+  ?>
+  <div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 3 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="<?php echo base_url();?>assets/admin/bower_components/moment/min/moment.min.js"></script>
+<!-- SlimScroll -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<!-- iCheck 1.0.1 -->
+<script src="<?php echo base_url();?>assets/admin/plugins/iCheck/icheck.min.js"></script>
+<!-- FastClick -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/fastclick/lib/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="<?php echo base_url();?>assets/admin/dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="<?php echo base_url();?>assets/admin/dist/js/demo.js"></script>
+</body>
+</html>

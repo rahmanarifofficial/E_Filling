@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>E-Filing | Public</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/Ionicons/css/ionicons.min.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/plugins/iCheck/all.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/select2/dist/css/select2.min.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/dist/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/dist/css/skins/_all-skins.min.css">
+    <!-- Fancybox -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/js/fancybox/jquery.fancybox.css">
+</head>
+<body class="hold-transition skin-blue layout-top-nav">
+<div class="wrapper">
+  <?php 
+    include('header.html');
+  ?>
+      <div class="content-wrapper">
+        <section class="content-header">
+          <h1 style="padding-bottom: 10px">
+            <?php 
+              foreach ($selectedFile as $key) {
+                echo $key->fileNameNoDateTime;
+                $file_name = explode(".", $key->fileNameNoDateTime);
+
+                $file_extension = end($file_name);
+                
+                if ($file_extension == "pdf" || $file_extension == "doc" || $file_extension == "docx" || $file_extension == "xls" || $file_extension == "xlsx" || $file_extension == "ppt" || $file_extension == "pptx") {?> 
+                  <a style="color: currentColor;" href="<?php echo base_url();?>/controller_public/openFile/<?php echo $key->fileNameNoExtension?>" title="Open File">
+                    <span class="glyphicon glyphicon-open-file"></span>
+                  </a>
+                <?php  
+                }else{?>
+                  <a style="color: currentColor;" href="<?php echo base_url();?>./storedFile/images/<?php echo $key->fileName ?>" title="Open File">
+                    <span class="glyphicon glyphicon-open-file"></span>
+                  </a>  
+                <?php                
+                }
+            ?>
+
+          </h1>
+          <!-- Default box -->
+          <div class="box">
+            <div class="box-header with-border">
+              <h3 class="box-title">Log File</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                  <i class="fa fa-minus"></i></button>
+              </div>
+            </div>
+            <div class="box-body">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td style="width: 200px"><b>Description</td>
+                    <td><?php 
+                    if ($key->file_description == null) {
+                      echo "Tidak Ada";
+                    }else{
+                      echo $key->file_description;
+                    }?>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 200px"><b>Uploader</td>
+                    <td><?php echo $key->full_name; ?></td>
+                  </tr>
+                  <tr>
+                    <td style="width: 200px"><b>Upload Date</td>
+                    <td><?php echo $key->uploadDate; ?></td>
+                  </tr>
+                  <tr>
+                    <td style="width: 200px"><b>Upload Time</td>
+                    <td><?php echo $key->uploadTime; ?></td>
+                  </tr>
+                  <tr>
+                    <td style="width: 200px"><b>Expired Date</td>
+                    <td>
+                      <?php 
+                        if ($key->expiredDate == 0000-00-00) {
+                          echo "Tidak Ada";
+                        }else{
+                          echo $key->expiredDate;
+                        }
+                      ?>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 200px"><b>Revisi</td>
+                    <td><?php echo $key->revision ?></td>
+                  </tr>
+                  <tr>
+                    <td><b>Access on</td>
+                    <td><?php 
+                      if ($key->previledgeAccess == 3) {
+                        echo "Directorate and Derivatives";
+                      }elseif ($key->previledgeAccess == 2) {
+                        echo "Department and Derivatives";
+                      }elseif ($key->previledgeAccess == 1) {
+                        echo "Section and Derivatives";
+                      }
+                     ?></td>
+                  </tr>
+                  <tr>
+                    <td style="width: 200px"><b>Downloaded</td>
+                    <td><?php 
+                      $downloaded = 0;
+                      foreach ($downloadedFile as $key) {
+                        $downloaded = $key->totalDownload;
+                      }
+                      echo $downloaded;
+                    ?>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        <?php 
+          }
+        ?>
+        </section>
+        <section class="content">
+          <div class="row">
+            <div class="col-md-12">
+              <ul class="timeline">
+                <?php 
+                // var_dump($parentFile);
+                if (!empty($comment)) {?>
+                    <li class="time-label">
+                    <span class="bg-green">
+                      Comment
+                    </span>
+                  </li>
+                  <?php foreach ($comment as $key) {?>
+                    <li>
+                      <i class="fa fa-comments bg-yellow"></i>
+                      <div class="timeline-item">
+                        <span class="time"><i class="fa fa-clock-o"></i> <?php echo $key->uploadTime ?></span>
+                        <span class="time"><i class="fa fa-calendar"></i> <?php echo $key->uploadDate ?></span>
+                        <h3 class="timeline-header"><a href="#"><?php echo $key->fullname;?></a> comment this file</h3>
+                        <div class="timeline-body">
+                          <p><?php echo $key->comment;?></p>
+                        </div>
+                      </div>
+                    </li>
+                  <?php
+                  }
+                }
+                ?>
+                  <li class="time-label">
+                    <span class="bg-red">
+                      File Uploaded
+                    </span>
+                  </li>
+                  <?php 
+                  if (!empty($parentFile)) {
+                    foreach ($selectedFile as $key) {?>
+                      <li>
+                        <i class="fa fa-user bg-aqua"></i>
+                        <div class="timeline-item">
+                          <span class="time"><i class="fa fa-clock-o"></i><?php echo $key->uploadTime; ?></span>
+                          <span class="time"><i class="fa fa-calendar"></i> <?php echo $key->uploadDate ?></span>
+                          <h3 class="timeline-header no-border"><b>
+                            <?php 
+                              echo $key->first_name;
+                              echo " ";
+                              echo $key->last_name;
+                            ?>
+                          </b>
+                             update with this file    
+                          </h3>
+                        </div>
+                      </li>
+                    <?php
+                    } 
+                    foreach ($parentFile as $oldFile) {?>
+                    <li>
+                      <i class="fa fa-user bg-aqua"></i>
+                      <div class="timeline-item">
+                        <span class="time"><i class="fa fa-clock-o"></i><?php echo $oldFile->uploadTime; ?></span>
+                        <span class="time"><i class="fa fa-calendar"></i> <?php echo $oldFile->uploadDate ?></span>
+                        <h3 class="timeline-header no-border"><b>
+                          <?php 
+                            echo $key->first_name;
+                            echo " ";
+                            echo $key->last_name;
+                          ?>
+                        </b>
+                            upload <a href="<?php echo base_url();?>controller_public/infoFile/<?php echo $oldFile->id_file?>"><?php echo $oldFile->fileNameNoDateTime;?></a> 
+                          </h3>
+                        </div>
+                      </li>
+                      <?php
+                      }
+                    }elseif (empty($parentFile)) {
+                      foreach ($selectedFile as $key) {?>
+                      <li>
+                        <i class="fa fa-user bg-aqua"></i>
+                        <div class="timeline-item">
+                          <span class="time"><i class="fa fa-clock-o"></i><?php echo $key->uploadTime; ?></span>
+                          <span class="time"><i class="fa fa-calendar"></i> <?php echo $key->uploadDate ?></span>
+                          <h3 class="timeline-header no-border"><b>
+                            <?php 
+                              echo $key->first_name;
+                              echo " ";
+                              echo $key->last_name;
+                            ?>
+                          </b>
+                              upload this file    
+                          </h3>
+                        </div>
+                      </li>
+                    <?php
+                    }
+                  }
+                ?>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </div>
+  <?php
+    include('footer.html')
+  ?>
+</div>
+<!-- jQuery 3 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Select2 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/select2/dist/js/select2.full.min.js"></script>
+<!-- SlimScroll -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<!-- iCheck 1.0.1 -->
+<script src="<?php echo base_url();?>assets/admin/plugins/iCheck/icheck.min.js"></script>
+<!-- FastClick -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/fastclick/lib/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="<?php echo base_url();?>assets/admin/dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="<?php echo base_url();?>assets/admin/dist/js/demo.js"></script>
+<script src="<?php echo base_url();?>assets/js/jquery-1.10.2.min.js"></script>
+<script src="<?php echo base_url();?>assets/js/jquery.chained.min.js"></script>
+<script>
+    $("#department").chained("#directorate"); // disini kita hubungkan kota dengan provinsi
+    $("#section").chained("#department"); // disini kita hubungkan kecamatan dengan kota
+</script>
+</body>
+</html>
+<!-- Fancy Box -->
+<script src="<?php echo base_url();?>assets/js/fancybox/jquery.fancybox.pack.js"></script>
+<!-- Selector -->
+<script>
+  $(document).ready(function() {
+    $(".perbesar").fancybox();
+  });
+</script>

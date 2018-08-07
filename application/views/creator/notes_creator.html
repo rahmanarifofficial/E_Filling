@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>E-Filling | Creator</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/font-awesome/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/Ionicons/css/ionicons.min.css">
+  <!-- daterange picker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap-daterangepicker/daterangepicker.css">
+  <!-- bootstrap datepicker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/plugins/iCheck/all.css">
+  <!-- Bootstrap Color Picker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+  <!-- Bootstrap time Picker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/plugins/timepicker/bootstrap-timepicker.min.css">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/select2/dist/css/select2.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/dist/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/dist/css/skins/_all-skins.min.css">
+  <!-- Google Font -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <!-- Fancybox -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/js/fancybox/jquery.fancybox.css">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+  <?php
+    include ('header.html');
+  ?>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="header">MAIN NAVIGATION</li>
+        <li>
+          <a href="<?php echo base_url();?>controller_creator/sidebar/home">
+            <i class="fa fa-home"></i> <span>Home</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="<?php echo base_url();?>controller_creator/sidebar/data">
+            <i class="fa fa-folder-open"></i> <span>Data Management</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+        </li>
+        <li class="active"> 
+          <a href="<?php echo base_url();?>controller_creator/sidebar/notes">
+            <i class="fa fa-comments-o"></i> <span>Notes</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-right pull-right"></i>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="<?php echo base_url();?>controller_creator/sidebar/logout">
+            <i class="fa fa-power-off"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+  <div class="content-wrapper">
+    <section class="content-header">
+      <h1>Notes</h1>
+    </section>
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box box-primary">
+            <div class="box-body no-padding">
+              <div class="table-responsive mailbox-messages">
+                <table class="table table-hover table-striped" id="notes_table">
+                  <thead>
+                    <tr>
+                      <th>Full Name</th>
+                      <th>Notes</th>
+                      <th>File Name</th>
+                      <th>File Directory</th>
+                      <th>Date</th>
+                      <th>Time</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody style="cursor: pointer;">
+                    <?php 
+                    $id_fileBefore = 0;
+                    foreach ($comment as $key) { 
+                      $id_file = $key->id_file;
+                      if ($id_file != $id_fileBefore) {?>
+                        <tr>
+                        <?php if ($key->status == 1) { ?>
+                          <td><a style="color: currentColor;" href="#" data-toggle="modal" data-target="#modal-reply<?php echo $key->id_file;?>"><?php echo $key->fullname; ?></a></td>
+                          <td><a style="color: currentColor;" href="#" data-toggle="modal" data-target="#modal-reply<?php echo $key->id_file;?>"><?php echo $key->comment; ?></td>
+                          <td><a style="color: currentColor;" href="<?php echo base_url();?>controller_creator/openFile/<?php echo $key->url ?>" target="_blank"><?php echo $key->file_name; ?></td>
+                          <td><?php echo $key->folder_name; ?></td>
+                          <td><?php echo $key->uploadDate; ?></td>
+                          <td><?php echo $key->uploadTime; ?></td>
+                          <td>
+                            <a class="btn btn-danger btn-sm" href="<?php echo base_url();?>controller_creator/deleteCommentFile/<?php echo $key->id_file ?>"> <i class="fa fa-trash-o"></i></a>
+                            <a class="btn btn-info btn-sm" href = "<?php echo base_url();?>controller_creator/unreadCommentFile/<?php echo $key->id_file ?>"><i class="fa fa-eye"></i></a>
+                          </td>
+                        <?php  
+                          } elseif ($key->status == 0) { ?>
+                          <td style="font-weight: bold;"><a style="color: currentColor;" href="#" data-toggle="modal" data-target="#modal-reply<?php echo $key->id_file;?>"><?php echo $key->fullname; ?></td>
+                          <td style="font-weight: bold;"><a style="color: currentColor;" href="#" data-toggle="modal" data-target="#modal-reply<?php echo $key->id_file;?>"><?php echo $key->comment; ?></td>
+                          <td style="font-weight: bold;"><a style="color: currentColor;" href="<?php echo base_url();?>controller_creator/openFile/<?php echo $key->url ?>" target="_blank"><?php echo $key->file_name; ?></td>
+                          <td style="font-weight: bold;"><?php echo $key->folder_name; ?></td>
+                          <td style="font-weight: bold;"><?php echo $key->uploadDate; ?></td>
+                          <td style="font-weight: bold;"><?php echo $key->uploadTime; ?></td>
+                          <td>
+                            <a class="btn btn-danger btn-sm" href="<?php echo base_url();?>controller_creator/deleteCommentFile/<?php echo $key->id_file ?>"> <i class="fa fa-trash-o"></i></a>
+                            <a class="btn btn-info btn-sm" href ="<?php echo base_url();?>controller_creator/unreadCommentFile/<?php echo $key->id_file ?>"><i class="fa fa-eye"></i></a>
+                          </td>
+                        <?php
+                          }
+                        ?>
+                        </tr>
+                      <?php
+                        $id_fileBefore = $id_file;
+                      }
+                      ?>
+                    <div class="modal fade" id="modal-reply<?php echo $key->id_file;?>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Reply Comment <?php echo $key->file_name;?></h4>
+                          </div>
+                          <?php echo form_open_multipart("controller_creator/replyCommentFile/$key->id_file");?>
+                          <div class="modal-footer">
+                            <div class="form-group">
+                              <textarea name="comment" placeholder="reply here" class="form-control" required></textarea>
+                            </div>
+                            <input type="submit" value="Comment" class="btn btn-danger"/>
+                          </div>
+                          </form>
+                          <div class="modal-body">
+                            <?php 
+                              foreach ($comment as $key) {
+                                if ($key->id_file == $id_file) {?>
+                                <div class="timeline-item">
+                                  <?php if ($key->prev == 1) {
+                                    $prev = "Public";
+                                  }elseif ($key->prev == 2) {
+                                    $prev = "Creator";
+                                  }elseif ($key->prev == 3) {
+                                    $prev = "Admin";
+                                  } ?>
+                                  <label><?php echo $key->fullname." | ".$prev ?></label>
+                                  <span style="float: right;"><i class="fa fa-clock-o"></i> <?php echo $key->uploadDate."\t".$key->uploadTime;?></span>
+                                  <p style="text-indent: 20px"><?php echo $key->comment; ?></p>
+                                </div>
+                            <?php
+                                }
+                              } 
+                            ?>
+                          </div>
+                          
+                        </div>
+                      </div>
+                    </div>
+                    <?php
+                      } 
+                    ?>
+                  </tbody>
+                </table>
+                <!-- /.table -->
+              </div>
+              <!-- /.mail-box-messages -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <?php
+    include('footer.html');
+  ?>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 3 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Select2 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/select2/dist/js/select2.full.min.js"></script>
+<!-- InputMask -->
+<script src="<?php echo base_url();?>assets/admin/plugins/input-mask/jquery.inputmask.js"></script>
+<script src="<?php echo base_url();?>assets/admin/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+<script src="<?php echo base_url();?>assets/admin/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+<!-- date-range-picker -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/moment/min/moment.min.js"></script>
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+<!-- bootstrap datepicker -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<!-- bootstrap color picker -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+<!-- bootstrap time picker -->
+<script src="<?php echo base_url();?>assets/admin/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+<!-- SlimScroll -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<!-- iCheck 1.0.1 -->
+<script src="<?php echo base_url();?>assets/admin/plugins/iCheck/icheck.min.js"></script>
+<!-- FastClick -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/fastclick/lib/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="<?php echo base_url();?>assets/admin/dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="<?php echo base_url();?>assets/admin/dist/js/demo.js"></script>
+<!-- Fancy Box -->
+<script src="<?php echo base_url();?>assets/js/fancybox/jquery.fancybox.pack.js"></script>
+<!-- Selector -->
+<script>
+  $(document).ready(function() {
+    $(".perbesar").fancybox();
+  });
+</script>
+<!-- Page script -->
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Datemask dd/mm/yyyy
+    $('#datemask').inputmask('yyyy-mm-dd', { 'placeholder': 'yyyy-mm-dd' })
+    //Datemask2 mm/dd/yyyy
+    $('#datemask2').inputmask('yyyy-mm-dd', { 'placeholder': 'yyyy-mm-dd' })
+    //Money Euro
+    $('[data-mask]').inputmask()
+
+    //Date range picker
+    $('#reservation').daterangepicker()
+    //Date range picker with time picker
+    $('#reservationtime').daterangepicker({ timePicker: true, timePickerIncrement: 30, format: 'yyyy-mm-dd h:mm A' })
+    //Date range as a button
+    $('#daterange-btn').daterangepicker(
+      {
+        ranges   : {
+          'Today'       : [moment(), moment()],
+          'Yesterday'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
+          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+          'This Month'  : [moment().startOf('month'), moment().endOf('month')],
+          'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        },
+        startDate: moment().subtract(29, 'days'),
+        endDate  : moment()
+      },
+      function (start, end) {
+        $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+      }
+    )
+
+    //Date picker
+    $('#datepicker').datepicker({
+      autoclose: true
+    })
+
+    //iCheck for checkbox and radio inputs
+    $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+      checkboxClass: 'icheckbox_minimal-blue',
+      radioClass   : 'iradio_minimal-blue'
+    })
+    //Red color scheme for iCheck
+    $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+      checkboxClass: 'icheckbox_minimal-red',
+      radioClass   : 'iradio_minimal-red'
+    })
+    //Flat red color scheme for iCheck
+    $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+      checkboxClass: 'icheckbox_flat-green',
+      radioClass   : 'iradio_flat-green'
+    })
+
+    //Colorpicker
+    $('.my-colorpicker1').colorpicker()
+    //color picker with addon
+    $('.my-colorpicker2').colorpicker()
+
+    //Timepicker
+    $('.timepicker').timepicker({
+      showInputs: false
+    })
+
+    // $(".delete-button").style.visibility = "hidden";
+    //Enable iCheck plugin for checkboxes
+    //iCheck for checkbox and radio inputs
+    $('.mailbox-messages input[type="checkbox"]').iCheck({
+      checkboxClass: 'icheckbox_flat-blue',
+      radioClass: 'iradio_flat-blue'
+    });
+
+  })
+</script>
+
+</body>
+</html>

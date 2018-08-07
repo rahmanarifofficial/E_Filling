@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>E-Filing | Public</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/Ionicons/css/ionicons.min.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/plugins/iCheck/all.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/select2/dist/css/select2.min.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/dist/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/dist/css/skins/_all-skins.min.css">
+    <!-- Fancybox -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/js/fancybox/jquery.fancybox.css">
+</head>
+<body class="hold-transition skin-blue layout-top-nav">
+<div class="wrapper">
+  <?php 
+    include('header.html');
+  ?>
+  <!-- sebelum search -->
+  <?php 
+    if (!isset($fileSearch)) { ?>
+    <div class="content-wrapper">
+        <section class="content">
+          <form action="<?php echo base_url();?>controller_public/searchFile" method="post">
+            <div class="row">
+              <!-- search -->
+              <div class="col-md-12">
+                <div class="input-group input-group-lg">
+                  <input type="text" name="input" class="form-control" placeholder="Search File...">
+                  <span class="input-group-btn">
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                      <i class="fa fa-search"></i>
+                    </button>
+                  </span>
+                </div>
+              </div>
+              <!-- filter -->
+              <div class="col-md-12">
+                <div class="box">
+                  <div class="box-header with-border">
+                    <h3 class="box-title"> Filter <i class="fa fa-filter "></i></h3>
+                    <div class="box-tools pull-right">
+                      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    </div>
+                  </div>
+                  <div class="box-body">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <p class="text-center">
+                          <strong>Directorate</strong>
+                        </p>
+                        <select class="form-control select2" name="directorate" id="directorate" style="width: 100%;">
+                          <option selected="" value="">All</option>
+                          <?php
+                          foreach ($directorate as $dir) {
+                          ?>
+                            <option <?php echo $directorate_selected == $dir->id_directorate ? 'selected="selected"' : '' ?> 
+                              value="<?php echo $dir->id_directorate ?>">
+                              <?php 
+                                echo $dir->directorate ; 
+                              ?>    
+                            </option>
+                          <?php
+                            }
+                          ?>
+                        </select>
+                      </div>
+                      <div class="col-md-4">
+                        <p class="text-center">
+                          <strong>Department</strong>
+                        </p>
+                        <select class="form-control select2" name="department" id="department" style="width: 100%;">
+                          <option selected="" value="">All</option>
+                          <?php
+                          foreach ($department as $dep) {
+                          ?>
+                            <option <?php echo $department_selected == $dep->id_directorate ? 'selected="selected"' : '' ?> 
+                            class="<?php echo $dep->id_directorate ?>" value="<?php echo $dep->id_department ?>"><?php echo $dep->department; 
+                            ?></option>
+                          <?php
+                            }
+                          ?>
+                        </select>
+                      </div>
+                      <div class="col-md-4">
+                        <p class="text-center">
+                          <strong>Section</strong>
+                        </p>
+                        <select class="form-control select2" name="section" id="section" style="width: 100%;">
+                          <option selected="" value="">All</option>
+                          <?php
+                            foreach ($section as $sec) {
+                            ?>
+                            <option <?php echo $section_selected == $sec->id_section ? 'selected="selected"' : '' ?>  
+                                class="<?php echo $sec->id_department ?>" value="<?php echo $sec->id_section ?>"><?php echo $sec->section ?></option>
+                            <?php
+                              }
+                            ?>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="box-footer">
+                    <div class="row">
+                      <div class="col-sm-12 col-xs-6">
+                        <div class="description-block border-right">
+                          <h5 class="description-header">
+                            <?php
+                            echo $_SESSION["totalFile"];
+                            ?>
+                          </h5>
+                          <span class="description-text">File Stored</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <!-- kalau public dapat access ALL-->
+          <?php
+          if (empty($thisFolder)) {?>
+          <div class="box box-default">
+            <div class="box-header with-border">
+              <h2 class="box-title"> Root Folder </h2>
+            </div>
+            <div class="box-body">
+              <?php 
+                foreach ($childFolder as $key) { ?>
+                  <a href="<?php echo base_url();?>controller_public/openFolder/<?php echo $key->id_folder; ?>">
+                    <div class="alert alert-info alert-dismissible">
+                      <h4><i class="icon fa fa-folder"></i> <?php echo $key->folder; ?></h4>
+                    </div>                
+                  </a>
+              <?php
+                }
+              ?>
+            </div>
+          </div>
+          <!-- kalau public dapat access BUKAN ALL-->
+        <?php
+          }elseif (!empty($thisFolder)) {?>
+            <div class="box box-default">
+              <div class="box-header with-border">
+                <h2 class="box-title">  
+                  <?php 
+                  foreach ($thisFolder as $key) { 
+                    echo $key->folder;
+                  }
+                  ?>
+                </h2>
+              </div>
+              <div class="box-body">
+                <?php 
+                  foreach ($childFolder as $key) { ?>
+                    <a href="<?php echo base_url();?>controller_public/openFolder/<?php echo $key->id_folder; ?>">
+                      <div class="alert alert-info alert-dismissible">
+                        <h4><i class="icon fa fa-folder"></i> <?php echo $key->folder; ?></h4>
+                      </div>                
+                    </a>
+                <?php
+                  }
+                ?>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="box-header with-border">
+                      <h4 class="box-title">
+                        PDF File
+                      </h4>
+                    </div>
+                    <div class="box-body">
+                      <?php
+                      foreach ($file as $key) {
+                        $text = $key->fileNameNoDateTime;
+                        $file_name = explode(".", $text);
+                        $file_extension = end($file_name);
+                        if ($file_extension == "pdf") {?>
+                          <div class="col-lg-3 col-xs-6">
+                            <a class="small-box bg-red" href="<?php echo base_url();?>controller_public/openFile/<?php echo $key->fileNameNoExtension?>" target="_blank"> 
+                              <div class="small-box bg-red">
+                                <div class="inner">
+                                  <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                                  <br>
+                                  <div>
+                                    <a href="<?php echo base_url();?>controller_public/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs">Info</a>
+                                    <a href="#" data-toggle="modal" data-target="#modal-comment<?php echo $key->id_file;?>" class="btn btn-warning btn-xs">Comment</a>
+                                    <a href="<?php echo base_url();?>controller_public/downloadFile/<?php echo $key->id_file?>" class="btn btn-info btn-xs">Download</a>
+                                  </div>
+                                </div>
+                                <div class="icon">
+                                  <i class="fa fa-file-pdf-o"></i>
+                                </div>
+                              </div>
+                            </a>
+                          </div>
+                          
+                          <?php for($i = 0; $i < $count; $i++) { ?>
+                            <!-- Modal for comment file -->
+                            <div class="modal fade" id="modal-comment<?php echo $key->id_file;?>">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 class="modal-title">Comment File <?php echo $key->fileNameNoDateTime;?></h4>
+                                  </div>
+                                    <div class="modal-body">
+                                    <?php foreach ($comment as $com ) { 
+                                        if ($com->id_file==$key->id_file) { ?>
+                                          <div class="timeline-item">
+                                            <label><?php echo $com->first_name." ".$com->last_name; ?></label>
+                                            <span style="float: right;"><i class="fa fa-clock-o"></i> <?php echo $com->uploadDate."\t".$com->uploadTime;?></span>
+                                            <p style="text-indent: 20px"><?php echo $com->comment; ?></p>
+                                          </div>
+                                    <?php    
+                                        }
+                                      } 
+                                    ?>
+                                    </div>
+                                    <div class="modal-footer">
+                                    <?php echo form_open_multipart("controller_public/commentFile/$key->id_file");?>
+                                      <div class="form-group">
+                                        <textarea name="comment" placeholder="comment here" class="form-control" required></textarea>
+                                      </div>
+                                      <input type="submit" value="Comment" class="btn btn-danger"/>
+                                    </div>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                      <?php  
+                            } 
+                          }
+                        }
+                      ?>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="box-header with-border">
+                      <h4 class="box-title">
+                        Word File
+                      </h4>
+                    </div>
+                    <div class="box-body">
+                      <?php
+                      foreach ($file as $key) {
+                        $text = $key->fileNameNoDateTime;
+                        $file_name = explode(".", $text);
+                        $file_extension = end($file_name);
+                        if ($file_extension == "doc" || $file_extension == "docx") {?>
+                          <div class="col-lg-3 col-xs-6">
+                            <a class="small-box bg-blue" href="<?php echo base_url();?>controller_public/openFile/<?php echo $key->fileNameNoExtension?>" target="_blank"> 
+                              <div class="small-box bg-blue">
+                                <div class="inner">
+                                  <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                                  <br>
+                                  <div>
+                                    <a href="<?php echo base_url();?>controller_public/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs">Info</a>
+                                    <a href="#" data-toggle="modal" data-target="#modal-comment<?php echo $key->id_file;?>" class="btn btn-warning btn-xs">Comment</a>
+                                    <a href="<?php echo base_url();?>controller_public/downloadFile/<?php echo $key->id_file?>" class="btn btn-info btn-xs">Download</a>
+                                  </div>
+                                </div>
+                                <div class="icon">
+                                  <i class="fa fa-file-word-o"></i>
+                                </div>
+                              </div>
+                            </a>
+                          </div>
+                          
+                          <?php for($i = 0; $i < $count; $i++) { ?>
+                            <!-- Modal for comment file -->
+                            <div class="modal fade" id="modal-comment<?php echo $key->id_file;?>">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 class="modal-title">Comment File <?php echo $key->fileNameNoDateTime;?></h4>
+                                  </div>
+                                    <div class="modal-body">
+                                    <?php foreach ($comment as $com ) { 
+                                        if ($com->id_file==$key->id_file) { ?>
+                                          <div class="timeline-item">
+                                            <label><?php echo $com->first_name." ".$com->last_name; ?></label>
+                                            <span style="float: right;"><i class="fa fa-clock-o"></i> <?php echo $com->uploadDate."\t".$com->uploadTime;?></span>
+                                            <p style="text-indent: 20px"><?php echo $com->comment; ?></p>
+                                          </div>
+                                    <?php    
+                                        }
+                                      } 
+                                    ?>
+                                    </div>
+                                    <div class="modal-footer">
+                                    <?php echo form_open_multipart("controller_public/commentFile/$key->id_file");?>
+                                      <div class="form-group">
+                                        <textarea name="comment" placeholder="comment here" class="form-control" required></textarea>
+                                      </div>
+                                      <input type="submit" value="Comment" class="btn btn-danger"/>
+                                    </div>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                      <?php  
+                            }
+                          }
+                        }
+                      ?>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="box-header with-border">
+                      <h4 class="box-title">
+                        Excel File
+                      </h4>
+                    </div>
+                    <div class="box-body">
+                      <?php
+                      foreach ($file as $key) {
+                        $text = $key->fileNameNoDateTime;
+                        $file_name = explode(".", $text);
+                        $file_extension = end($file_name);
+                        if ($file_extension == "xls" || $file_extension == "xlsx") {?>
+                          <div class="col-lg-3 col-xs-6">
+                            <a class="small-box bg-green" href="<?php echo base_url();?>controller_public/openFile/<?php echo $key->fileNameNoExtension?>" target="_blank"> 
+                              <div class="small-box bg-green">
+                                <div class="inner">
+                                  <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                                  <br>
+                                  <div>
+                                    <a href="<?php echo base_url();?>controller_public/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs">Info</a>
+                                    <a href="#" data-toggle="modal" data-target="#modal-comment<?php echo $key->id_file;?>" class="btn btn-warning btn-xs">Comment</a>
+                                    <a href="<?php echo base_url();?>controller_public/downloadFile/<?php echo $key->id_file?>" class="btn btn-info btn-xs">Download</a>
+                                  </div>
+                                </div>
+                                <div class="icon">
+                                  <i class="fa fa-file-excel-o"></i>
+                                </div>
+                              </div>
+                            </a>
+                          </div>
+
+                          <?php for($i = 0; $i < $count; $i++) { ?>
+                            <!-- Modal for comment file -->
+                            <div class="modal fade" id="modal-comment<?php echo $key->id_file;?>">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 class="modal-title">Comment File <?php echo $key->fileNameNoDateTime;?></h4>
+                                  </div>
+                                    <div class="modal-body">
+                                    <?php foreach ($comment as $com ) { 
+                                        if ($com->id_file==$key->id_file) { ?>
+                                          <div class="timeline-item">
+                                            <label><?php echo $com->first_name." ".$com->last_name; ?></label>
+                                            <span style="float: right;"><i class="fa fa-clock-o"></i> <?php echo $com->uploadDate."\t".$com->uploadTime;?></span>
+                                            <p style="text-indent: 20px"><?php echo $com->comment; ?></p>
+                                          </div>
+                                    <?php    
+                                        }
+                                      } 
+                                    ?>
+                                    </div>
+                                    <div class="modal-footer">
+                                    <?php echo form_open_multipart("controller_public/commentFile/$key->id_file");?>
+                                      <div class="form-group">
+                                        <textarea name="comment" placeholder="comment here" class="form-control" required></textarea>
+                                      </div>
+                                      <input type="submit" value="Comment" class="btn btn-danger"/>
+                                    </div>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                      <?php  
+                            }
+                          }
+                        }
+                      ?>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="box-header with-border">
+                      <h4 class="box-title">
+                        Powerpoint File
+                      </h4>
+                    </div>
+                    <div class="box-body">
+                      <?php
+                      foreach ($file as $key) {
+                        $text = $key->fileNameNoDateTime;
+                        $file_name = explode(".", $text);
+                        $file_extension = end($file_name);
+                        if ($file_extension == "ppt" || $file_extension == "pptx") {?>
+                          <div class="col-lg-3 col-xs-6">
+                            <a class="small-box bg-orange" href="<?php echo base_url();?>controller_public/openFile/<?php echo $key->fileNameNoExtension?>" target="_blank"> 
+                              <div class="small-box bg-orange">
+                                <div class="inner">
+                                  <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                                  <br>
+                                  <div>
+                                    <a href="<?php echo base_url();?>controller_public/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs">Info</a>
+                                    <a href="#" data-toggle="modal" data-target="#modal-comment<?php echo $key->id_file;?>" class="btn btn-warning btn-xs">Comment</a>
+                                    <a href="<?php echo base_url();?>controller_public/downloadFile/<?php echo $key->id_file?>" class="btn btn-info btn-xs">Download</a>
+                                  </div>
+                                </div>
+                                <div class="icon">
+                                  <i class="fa fa-file-powerpoint-o"></i>
+                                </div>
+                              </div>
+                            </a>
+                          </div>
+                          
+                          <?php for($i = 0; $i < $count; $i++) { ?>
+                            <!-- Modal for comment file -->
+                            <div class="modal fade" id="modal-comment<?php echo $key->id_file;?>">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 class="modal-title">Comment File <?php echo $key->fileNameNoDateTime;?></h4>
+                                  </div>
+                                    <div class="modal-body">
+                                    <?php foreach ($comment as $com ) { 
+                                        if ($com->id_file==$key->id_file) { ?>
+                                          <div class="timeline-item">
+                                            <label><?php echo $com->first_name." ".$com->last_name; ?></label>
+                                            <span style="float: right;"><i class="fa fa-clock-o"></i> <?php echo $com->uploadDate."\t".$com->uploadTime;?></span>
+                                            <p style="text-indent: 20px"><?php echo $com->comment; ?></p>
+                                          </div>
+                                    <?php    
+                                        }
+                                      } 
+                                    ?>
+                                    </div>
+                                    <div class="modal-footer">
+                                    <?php echo form_open_multipart("controller_public/commentFile/$key->id_file");?>
+                                      <div class="form-group">
+                                        <textarea name="comment" placeholder="comment here" class="form-control" required></textarea>
+                                      </div>
+                                      <input type="submit" value="Comment" class="btn btn-danger"/>
+                                    </div>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                      <?php  
+                            }
+                          }
+                        }
+                      ?>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="box-header with-border">
+                      <h4 class="box-title">
+                        Image File
+                      </h4>
+                    </div>
+                    <div class="box-body">
+                      <?php
+                      foreach ($file as $key) {
+                        $text = $key->fileNameNoDateTime;
+                        $file_name = explode(".", $text);
+                        $file_extension = end($file_name);
+                        if ($file_extension == "png" || $file_extension == "jpeg" || $file_extension == "jpg") { ?>
+                          <div class="col-lg-3 col-xs-6">
+                            <?php $key->fileName = str_replace(" ", "_", $key->fileName); ?>
+                            <a class="small-box bg-yellow perbesar" href="<?php echo base_url();?>./storedFile/images/<?php echo $key->fileName ?>"> 
+                              <div class="small-box bg-yellow">
+                                <div class="inner">
+                                  <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                                  <br>
+                                  <div>
+                                    <a href="<?php echo base_url();?>controller_public/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs">Info</a>
+                                    <a href="#" data-toggle="modal" data-target="#modal-comment<?php echo $key->id_file;?>" class="btn btn-warning btn-xs">Comment</a>
+                                    <a href="<?php echo base_url();?>controller_public/downloadFile/<?php echo $key->id_file?>" class="btn btn-info btn-xs">Download</a>
+                                  </div>
+                                </div>
+                                <div class="icon">
+                                  <img src="<?php echo base_url();?>./storedFile/images/<?php echo $key->fileName ?>" height="90" width="75">
+                                </div>
+                             </div>
+                            </a>
+                          </div>
+                          
+                          <?php for($i = 0; $i < $count; $i++) { ?>
+                            <!-- Modal for comment file -->
+                            <div class="modal fade" id="modal-comment<?php echo $key->id_file;?>">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 class="modal-title">Comment File <?php echo $key->fileNameNoDateTime;?></h4>
+                                  </div>
+                                    <div class="modal-body">
+                                    <?php foreach ($comment as $com ) { 
+                                        if ($com->id_file==$key->id_file) { ?>
+                                          <div class="timeline-item">
+                                            <label><?php echo $com->first_name." ".$com->last_name; ?></label>
+                                            <span style="float: right;"><i class="fa fa-clock-o"></i> <?php echo $com->uploadDate."\t".$com->uploadTime;?></span>
+                                            <p style="text-indent: 20px"><?php echo $com->comment; ?></p>
+                                          </div>
+                                    <?php    
+                                        }
+                                      } 
+                                    ?>
+                                    </div>
+                                    <div class="modal-footer">
+                                    <?php echo form_open_multipart("controller_public/commentFile/$key->id_file");?>
+                                      <div class="form-group">
+                                        <textarea name="comment" placeholder="comment here" class="form-control" required></textarea>
+                                      </div>
+                                      <input type="submit" value="Comment" class="btn btn-danger"/>
+                                    </div>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                      <?php  
+                            }
+                          }
+                        }
+                      ?>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        <?php
+          }
+        ?>
+        </section>
+      </div>
+    </div>
+  <!-- setelah searh -->
+  <?php  
+    }elseif(!empty($fileSearch)){?>
+    <div class="content-wrapper">
+      <section class="content">
+        <form action="<?php echo base_url();?>controller_public/searchFile" method="post">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="input-group input-group-lg">
+                <input type="text" name="input" class="form-control" placeholder="Search File...">
+                <span class="input-group-btn">
+                  <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </span>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title"> Filter <i class="fa fa-filter "></i></h3>
+                  <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                  </div>
+                </div>
+                <div class="box-body">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <p class="text-center">
+                        <strong>Directorate</strong>
+                      </p>
+                      <select class="form-control select2" name="directorate" id="directorate" style="width: 100%;">
+                        <option selected="" value="">All</option>
+                        <?php
+                        foreach ($directorate as $dir) {
+                        ?>
+                          <option <?php echo $directorate_selected == $dir->id_directorate ? 'selected="selected"' : '' ?> 
+                            value="<?php echo $dir->id_directorate ?>">
+                            <?php 
+                              echo $dir->directorate ; 
+                            ?>    
+                          </option>
+                        <?php
+                          }
+                        ?>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <p class="text-center">
+                        <strong>Department</strong>
+                      </p>
+                      <select class="form-control select2" name="department" id="department" style="width: 100%;">
+                        <option selected="" value="">All</option>
+                        <?php
+                        foreach ($department as $dep) {
+                        ?>
+                          <option <?php echo $department_selected == $dep->id_directorate ? 'selected="selected"' : '' ?> 
+                          class="<?php echo $dep->id_directorate ?>" value="<?php echo $dep->id_department ?>"><?php echo $dep->department; 
+                          ?></option>
+                        <?php
+                          }
+                        ?>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <p class="text-center">
+                        <strong>Section</strong>
+                      </p>
+                      <select class="form-control select2" name="section" id="section" style="width: 100%;">
+                        <option selected="" value="">All</option>
+                        <?php
+                          foreach ($section as $sec) {
+                          ?>
+                          <!--di sini kita tambahkan class berisi id kota-->
+                          <option <?php echo $section_selected == $sec->id_section ? 'selected="selected"' : '' ?>  
+                              class="<?php echo $sec->id_department ?>" value="<?php echo $sec->id_section ?>"><?php echo $sec->section ?></option>
+                          <?php
+                            }
+                          ?>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="box-footer">
+                  <div class="row">
+                    <div class="col-sm-12 col-xs-6">
+                      <div class="description-block border-right">
+                        <h5 class="description-header">
+                          <?php
+                          echo $_SESSION["totalFile"];
+                          ?>
+                        </h5>
+                        <span class="description-text">File Stored</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div class="box box-default">
+          <div class="box-header with-border">
+            <h2 class="box-title">  
+              Search
+            </h2>
+          </div>
+          <div class="box-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="box-header with-border">
+                  <h4 class="box-title">
+                    PDF File
+                  </h4>
+                </div>
+                <div class="box-body">
+                  <?php
+                  foreach ($fileSearch as $key) {
+                    $text = $key->fileNameNoDateTime;
+                    $file_name = explode(".", $text);
+                    $file_extension = end($file_name);
+                    if ($file_extension == "pdf") {?>
+                      <div class="col-lg-3 col-xs-6">
+                        <a class="small-box bg-red" href="<?php echo base_url();?>controller_creator/openFile/<?php echo $key->fileNameNoExtension?>" target="_blank"> 
+                          <div class="small-box bg-red">
+                            <div class="inner">
+                              <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                              <br>
+                              <div>
+                                <a href="<?php echo base_url();?>controller_public/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs" >Info</a>
+                                <a href="#" data-toggle="modal" data-target="#modal-comment<?php echo $key->id_file;?>" class="btn btn-warning btn-xs">Comment</a>
+                                <a href="<?php echo base_url();?>controller_public/downloadFile/<?php echo $key->id_file?>" class="btn btn-info btn-xs">Download</a>
+
+                              </div>
+                            </div>
+                            <div class="icon">
+                              <i class="fa fa-file-pdf-o"></i>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+
+                      <?php for($i = 0; $i < $count; $i++) { ?>
+                          <!-- Modal for comment file -->
+                          <div class="modal fade" id="modal-comment<?php echo $key->id_file;?>">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                  <h4 class="modal-title">Comment File <?php echo $key->fileNameNoDateTime;?></h4>
+                                </div>
+                                  <div class="modal-body">
+                                  <?php foreach ($comment as $com ) { 
+                                      if ($com->id_file==$key->id_file) { ?>
+                                        <div class="timeline-item">
+                                          <label><?php echo $com->first_name." ".$com->last_name; ?></label>
+                                          <span style="float: right;"><i class="fa fa-clock-o"></i> <?php echo $com->uploadDate."\t".$com->uploadTime;?></span>
+                                          <p style="text-indent: 20px"><?php echo $com->comment; ?></p>
+                                        </div>
+                                  <?php    
+                                      }
+                                    } 
+                                  ?>
+                                  </div>
+                                  <div class="modal-footer">
+                                  <?php echo form_open_multipart("controller_public/commentFile/$key->id_file");?>
+                                    <div class="form-group">
+                                      <textarea name="comment" placeholder="comment here" class="form-control" required></textarea>
+                                    </div>
+                                    <input type="submit" value="Comment" class="btn btn-danger"/>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                    <?php  
+                        } 
+                      }
+                    }
+                  ?>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="box-header with-border">
+                  <h4 class="box-title">
+                    Word File
+                  </h4>
+                </div>
+                <div class="box-body">
+                  <?php
+                  foreach ($fileSearch as $key) {
+                    $text = $key->fileNameNoDateTime;
+                    $file_name = explode(".", $text);
+                    $file_extension = end($file_name);
+                    if ($file_extension == "doc" || $file_extension == "docx") {?>
+                      <div class="col-lg-3 col-xs-6">
+                        <a class="small-box bg-blue" href="<?php echo base_url();?>controller_creator/openFile/<?php echo $key->fileNameNoExtension?>" target="_blank"> 
+                          <div class="small-box bg-blue">
+                            <div class="inner">
+                              <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                              <br>
+                              <div>
+                                <a href="<?php echo base_url();?>controller_public/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs" >Info</a>
+                                <a href="#" data-toggle="modal" data-target="#modal-comment<?php echo $key->id_file;?>" class="btn btn-warning btn-xs">Comment</a>
+                                <a href="<?php echo base_url();?>controller_public/downloadFile/<?php echo $key->id_file?>" class="btn btn-info btn-xs">Download</a>
+
+                              </div>
+                            </div>
+                            <div class="icon">
+                              <i class="fa fa-file-word-o"></i>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                      <?php for($i = 0; $i < $count; $i++) { ?>
+                          <!-- Modal for comment file -->
+                          <div class="modal fade" id="modal-comment<?php echo $key->id_file;?>">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                  <h4 class="modal-title">Comment File <?php echo $key->fileNameNoDateTime;?></h4>
+                                </div>
+                                  <div class="modal-body">
+                                  <?php foreach ($comment as $com ) { 
+                                      if ($com->id_file==$key->id_file) { ?>
+                                        <div class="timeline-item">
+                                          <label><?php echo $com->first_name." ".$com->last_name; ?></label>
+                                          <span style="float: right;"><i class="fa fa-clock-o"></i> <?php echo $com->uploadDate."\t".$com->uploadTime;?></span>
+                                          <p style="text-indent: 20px"><?php echo $com->comment; ?></p>
+                                        </div>
+                                  <?php    
+                                      }
+                                    } 
+                                  ?>
+                                  </div>
+                                  <div class="modal-footer">
+                                  <?php echo form_open_multipart("controller_public/commentFile/$key->id_file");?>
+                                    <div class="form-group">
+                                      <textarea name="comment" placeholder="comment here" class="form-control" required></textarea>
+                                    </div>
+                                    <input type="submit" value="Comment" class="btn btn-danger"/>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                    <?php  
+                        }
+                      }
+                    }
+                  ?>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="box-header with-border">
+                  <h4 class="box-title">
+                    Excel File
+                  </h4>
+                </div>
+                <div class="box-body">
+                  <?php
+                  foreach ($fileSearch as $key) {
+                    $text = $key->fileNameNoDateTime;
+                    $file_name = explode(".", $text);
+                    $file_extension = end($file_name);
+                    if ($file_extension == "xls" || $file_extension == "xlsx") {?>
+                      <div class="col-lg-3 col-xs-6">
+                        <a class="small-box bg-green" href="<?php echo base_url();?>controller_creator/openFile/<?php echo $key->fileNameNoExtension?>" target="_blank"> 
+                          <div class="small-box bg-green">
+                            <div class="inner">
+                              <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                              <br>
+                              <div>
+                                <a href="<?php echo base_url();?>controller_public/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs" >Info</a>
+                                <a href="#" data-toggle="modal" data-target="#modal-comment<?php echo $key->id_file;?>" class="btn btn-warning btn-xs">Comment</a>
+                                <a href="<?php echo base_url();?>controller_public/downloadFile/<?php echo $key->id_file?>" class="btn btn-info btn-xs">Download</a>
+                              </div>
+                            </div>
+                            <div class="icon">
+                              <i class="fa fa-file-excel-o"></i>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                      <?php for($i = 0; $i < $count; $i++) { ?>
+                          <!-- Modal for comment file -->
+                          <div class="modal fade" id="modal-comment<?php echo $key->id_file;?>">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                  <h4 class="modal-title">Comment File <?php echo $key->fileNameNoDateTime;?></h4>
+                                </div>
+                                  <div class="modal-body">
+                                  <?php foreach ($comment as $com ) { 
+                                      if ($com->id_file==$key->id_file) { ?>
+                                        <div class="timeline-item">
+                                          <label><?php echo $com->first_name." ".$com->last_name; ?></label>
+                                          <span style="float: right;"><i class="fa fa-clock-o"></i> <?php echo $com->uploadDate."\t".$com->uploadTime;?></span>
+                                          <p style="text-indent: 20px"><?php echo $com->comment; ?></p>
+                                        </div>
+                                  <?php    
+                                      }
+                                    } 
+                                  ?>
+                                  </div>
+                                  <div class="modal-footer">
+                                  <?php echo form_open_multipart("controller_public/commentFile/$key->id_file");?>
+                                    <div class="form-group">
+                                      <textarea name="comment" placeholder="comment here" class="form-control" required></textarea>
+                                    </div>
+                                    <input type="submit" value="Comment" class="btn btn-danger"/>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                    <?php  
+                        }
+                      }
+                    }
+                  ?>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="box-header with-border">
+                  <h4 class="box-title">
+                    Powerpoint File
+                  </h4>
+                </div>
+                <div class="box-body">
+                  <?php
+                  foreach ($fileSearch as $key) {
+                    $text = $key->fileNameNoDateTime;
+                    $file_name = explode(".", $text);
+                    $file_extension = end($file_name);
+                    if ($file_extension == "ppt" || $file_extension == "pptx") {?>
+                      <div class="col-lg-3 col-xs-6">
+                        <a class="small-box bg-orange" href="<?php echo base_url();?>controller_creator/openFile/<?php echo $key->fileNameNoExtension?>"target="_blank"> 
+                          <div class="small-box bg-orange">
+                            <div class="inner">
+                              <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                              <br>
+                              <div>
+                                <a href="<?php echo base_url();?>controller_public/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs" >Info</a>
+                                <a href="#" data-toggle="modal" data-target="#modal-comment<?php echo $key->id_file;?>" class="btn btn-warning btn-xs">Comment</a>
+                                <a href="<?php echo base_url();?>controller_public/downloadFile/<?php echo $key->id_file?>" class="btn btn-info btn-xs">Download</a>
+                              </div>
+                            </div>
+                            <div class="icon">
+                              <i class="fa fa-file-powerpoint-o"></i>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                      <?php for($i = 0; $i < $count; $i++) { ?>
+                          <!-- Modal for comment file -->
+                          <div class="modal fade" id="modal-comment<?php echo $key->id_file;?>">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                  <h4 class="modal-title">Comment File <?php echo $key->fileNameNoDateTime;?></h4>
+                                </div>
+                                  <div class="modal-body">
+                                  <?php foreach ($comment as $com ) { 
+                                      if ($com->id_file==$key->id_file) { ?>
+                                        <div class="timeline-item">
+                                          <label><?php echo $com->first_name." ".$com->last_name; ?></label>
+                                          <span style="float: right;"><i class="fa fa-clock-o"></i> <?php echo $com->uploadDate."\t".$com->uploadTime;?></span>
+                                          <p style="text-indent: 20px"><?php echo $com->comment; ?></p>
+                                        </div>
+                                  <?php    
+                                      }
+                                    } 
+                                  ?>
+                                  </div>
+                                  <div class="modal-footer">
+                                  <?php echo form_open_multipart("controller_public/commentFile/$key->id_file");?>
+                                    <div class="form-group">
+                                      <textarea name="comment" placeholder="comment here" class="form-control" required></textarea>
+                                    </div>
+                                    <input type="submit" value="Comment" class="btn btn-danger"/>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                    <?php  
+                        }
+                      }
+                    }
+                  ?>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="box-header with-border">
+                  <h4 class="box-title">
+                    Image File
+                  </h4>
+                </div>
+                <div class="box-body">
+                  <?php
+                  foreach ($fileSearch as $key) {
+                    $text = $key->fileNameNoDateTime;
+                    $file_name = explode(".", $text);
+                    $file_extension = end($file_name);
+                    if ($file_extension == "png" || $file_extension == "jpeg" || $file_extension == "jpg") { ?>
+                      <div class="col-lg-3 col-xs-6">
+                          <?php $key->fileName = str_replace(" ", "_", $key->fileName); ?>
+                          <a class="small-box bg-yellow perbesar" href="<?php echo base_url();?>./storedFile/images/<?php echo $key->fileName ?>"> 
+                            <div class="small-box bg-yellow">
+                              <div class="inner">
+                                <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                                <br>
+                                <div>
+                                  <a href="<?php echo base_url();?>controller_public/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs">Info</a>
+                                  <a href="#" data-toggle="modal" data-target="#modal-comment<?php echo $key->id_file;?>" class="btn btn-warning btn-xs">Comment</a>
+                                  <a href="<?php echo base_url();?>controller_public/downloadFile/<?php echo $key->id_file?>" class="btn btn-info btn-xs">Download</a>
+                                </div>
+                              </div>
+                              <div class="icon">
+                                <img src="<?php echo base_url();?>./storedFile/images/<?php echo $key->fileName ?>" height="90" width="75">
+                              </div>
+                           </div>
+                          </a>
+                        </div>
+                        <?php for($i = 0; $i < $count; $i++) { ?>
+                          <!-- Modal for comment file -->
+                          <div class="modal fade" id="modal-comment<?php echo $key->id_file;?>">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                  <h4 class="modal-title">Comment File <?php echo $key->fileNameNoDateTime;?></h4>
+                                </div>
+                                  <div class="modal-body">
+                                  <?php foreach ($comment as $com ) { 
+                                      if ($com->id_file==$key->id_file) { ?>
+                                        <div class="timeline-item">
+                                          <label><?php echo $com->first_name." ".$com->last_name; ?></label>
+                                          <span style="float: right;"><i class="fa fa-clock-o"></i> <?php echo $com->uploadDate."\t".$com->uploadTime;?></span>
+                                          <p style="text-indent: 20px"><?php echo $com->comment; ?></p>
+                                        </div>
+                                  <?php    
+                                      }
+                                    } 
+                                  ?>
+                                  </div>
+                                  <div class="modal-footer">
+                                  <?php echo form_open_multipart("controller_public/commentFile/$key->id_file");?>
+                                    <div class="form-group">
+                                      <textarea name="comment" placeholder="comment here" class="form-control" required></textarea>
+                                    </div>
+                                    <input type="submit" value="Comment" class="btn btn-danger"/>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                    <?php  
+                        }
+                      }
+                    }
+                  ?>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  <!-- file tidak ditemukan -->
+  <?php 
+  }elseif(empty($fileSearch)){?>
+    <div class="content-wrapper">
+        <section class="content">
+          <form action="<?php echo base_url();?>controller_public/searchFile" method="post">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="input-group input-group-lg">
+                  <input type="text" name="input" class="form-control" placeholder="Search File...">
+                  <span class="input-group-btn">
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                      <i class="fa fa-search"></i>
+                    </button>
+                  </span>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="box">
+                  <div class="box-header with-border">
+                    <h3 class="box-title"> Filter <i class="fa fa-filter "></i></h3>
+                    <div class="box-tools pull-right">
+                      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    </div>
+                  </div>
+                  <div class="box-body">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <p class="text-center">
+                          <strong>Directorate</strong>
+                        </p>
+                        <select class="form-control select2" name="directorate" id="directorate" style="width: 100%;">
+                          <option selected="" value="">All</option>
+                          <?php
+                          foreach ($directorate as $dir) {
+                          ?>
+                            <option <?php echo $directorate_selected == $dir->id_directorate ? 'selected="selected"' : '' ?> 
+                              value="<?php echo $dir->id_directorate ?>">
+                              <?php 
+                                echo $dir->directorate ; 
+                              ?>    
+                            </option>
+                          <?php
+                            }
+                          ?>
+                        </select>
+                      </div>
+                      <div class="col-md-4">
+                        <p class="text-center">
+                          <strong>Department</strong>
+                        </p>
+                        <select class="form-control select2" name="department" id="department" style="width: 100%;">
+                          <option selected="" value="">All</option>
+                          <?php
+                          foreach ($department as $dep) {
+                          ?>
+                            <option <?php echo $department_selected == $dep->id_directorate ? 'selected="selected"' : '' ?> 
+                            class="<?php echo $dep->id_directorate ?>" value="<?php echo $dep->id_department ?>"><?php echo $dep->department; 
+                            ?></option>
+                          <?php
+                            }
+                          ?>
+                        </select>
+                      </div>
+                      <div class="col-md-4">
+                        <p class="text-center">
+                          <strong>Section</strong>
+                        </p>
+                        <select class="form-control select2" name="section" id="section" style="width: 100%;">
+                          <option selected="" value="">All</option>
+                          <?php
+                            foreach ($section as $sec) {
+                            ?>
+                            <!--di sini kita tambahkan class berisi id kota-->
+                            <option <?php echo $section_selected == $sec->id_section ? 'selected="selected"' : '' ?>  
+                                class="<?php echo $sec->id_department ?>" value="<?php echo $sec->id_section ?>"><?php echo $sec->section ?></option>
+                            <?php
+                              }
+                            ?>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="box-footer">
+                    <div class="row">
+                      <div class="col-sm-12 col-xs-6">
+                        <div class="description-block border-right">
+                          <h5 class="description-header">
+                            <?php
+                            echo $_SESSION["totalFile"];
+                            ?>
+                          </h5>
+                          <span class="description-text">File Stored</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div class="box box-default">
+            <div class="box-header with-border">
+              <h2 class="box-title">  
+                FILE SEARCH
+              </h2>
+            </div>
+            <div class="box-body">
+            <div class="callout callout-danger">
+                <h4>File Not Found</h4>
+                <p>Unfortunately, we can't find your file. Please search with the OTHER KEYWORDS</p>
+              </div>
+            </div>
+          </div>
+        </section>
+    </div>
+  <?php  }
+  ?>
+
+  <?php
+    include('footer.html')
+  ?>
+</div>
+<!-- jQuery 3 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Select2 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/select2/dist/js/select2.full.min.js"></script>
+<!-- SlimScroll -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<!-- iCheck 1.0.1 -->
+<script src="<?php echo base_url();?>assets/admin/plugins/iCheck/icheck.min.js"></script>
+<!-- FastClick -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/fastclick/lib/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="<?php echo base_url();?>assets/admin/dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="<?php echo base_url();?>assets/admin/dist/js/demo.js"></script>
+<script src="<?php echo base_url();?>assets/js/jquery-1.10.2.min.js"></script>
+<script src="<?php echo base_url();?>assets/js/jquery.chained.min.js"></script>
+<script>
+    $("#department").chained("#directorate"); // disini kita hubungkan kota dengan provinsi
+    $("#section").chained("#department"); // disini kita hubungkan kecamatan dengan kota
+</script>
+</body>
+</html>
+<!-- Fancy Box -->
+<script src="<?php echo base_url();?>assets/js/fancybox/jquery.fancybox.pack.js"></script>
+<!-- Selector -->
+<script>
+  $(document).ready(function() {
+    $(".perbesar").fancybox();
+  });
+</script>

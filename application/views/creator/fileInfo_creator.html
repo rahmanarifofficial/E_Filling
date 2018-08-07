@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>E-Filling | Creator</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/font-awesome/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/Ionicons/css/ionicons.min.css">
+  <!-- bootstrap datepicker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/plugins/iCheck/all.css">
+  <!-- Bootstrap Color Picker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+  <!-- Bootstrap time Picker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/plugins/timepicker/bootstrap-timepicker.min.css">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/select2/dist/css/select2.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/dist/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/dist/css/skins/_all-skins.min.css">
+  <!-- Google Font -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <!-- Fancybox -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/js/fancybox/jquery.fancybox.css">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+  <?php
+    include ('header.html');
+  ?>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="header">MAIN NAVIGATION</li>
+        <li>
+          <a href="<?php echo base_url();?>controller_creator/sidebar/home">
+            <i class="fa fa-home"></i> <span>Home</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+        </li>
+        <li class="active">
+          <a href="<?php echo base_url();?>controller_creator/sidebar/data">
+            <i class="fa fa-folder-open"></i> <span>Data Management</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-right pull-right"></i>
+            </span>
+          </a>
+        </li>
+        <li> 
+          <a href="<?php echo base_url();?>controller_creator/sidebar/notes">
+            <i class="fa fa-comments"></i> <span>Notes</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="<?php echo base_url();?>controller_creator/sidebar/logout">
+            <i class="fa fa-power-off"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+      <div class="content-wrapper">
+        <section class="content-header">
+          <h1 style="padding-bottom: 10px">
+            <?php 
+              foreach ($selectedFile as $key) {
+                echo $key->fileNameNoDateTime;
+                $file_name = explode(".", $key->fileNameNoDateTime);
+
+                $file_extension = end($file_name);
+                
+                if ($file_extension == "pdf" || $file_extension == "doc" || $file_extension == "docx" || $file_extension == "xls" || $file_extension == "xlsx" || $file_extension == "ppt" || $file_extension == "pptx") {?> 
+                  <a style="color: currentColor;" href="<?php echo base_url();?>/controller_creator/openFile/<?php echo $key->fileNameNoExtension?>" title="Open File">
+                    <span class="glyphicon glyphicon-open-file"></span>
+                  </a>
+                <?php  
+                }else{?>
+                  <a style="color: currentColor;" href="<?php echo base_url();?>./storedFile/images/<?php echo $key->fileName ?>" title="Open File">
+                    <span class="glyphicon glyphicon-open-file"></span>
+                  </a>  
+                <?php                
+                }
+            ?>
+
+          </h1>
+          <!-- Default box -->
+          <div class="box">
+            <div class="box-header with-border">
+              <h3 class="box-title">Log File</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                  <i class="fa fa-minus"></i></button>
+              </div>
+            </div>
+            <div class="box-body">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td style="width: 200px"><b>Description</td>
+                    <td><?php 
+                    if ($key->file_description == null) {
+                      echo "Tidak Ada";
+                    }else{
+                      echo $key->file_description;
+                    }?>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 200px"><b>Uploader</td>
+                    <td><?php echo $key->full_name; ?></td>
+                  </tr>
+                  <tr>
+                    <td style="width: 200px"><b>Upload Date</td>
+                    <td><?php echo $key->uploadDate; ?></td>
+                  </tr>
+                  <tr>
+                    <td style="width: 200px"><b>Upload Time</td>
+                    <td><?php echo $key->uploadTime; ?></td>
+                  </tr>
+                  <tr>
+                    <td style="width: 200px"><b>Expired Date</td>
+                    <td>
+                      <?php 
+                        if ($key->expiredDate == 0000-00-00) {
+                          echo "Tidak Ada";
+                        }else{
+                          echo $key->expiredDate;
+                        }
+                      ?>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 200px"><b>Revisi</td>
+                    <td><?php echo $key->revision ?></td>
+                  </tr>
+                  <tr>
+                    <td><b>Access on</td>
+                    <td><?php 
+                      if ($key->previledgeAccess == 3) {
+                        echo "Directorate and Derivatives";
+                      }elseif ($key->previledgeAccess == 2) {
+                        echo "Department and Derivatives";
+                      }elseif ($key->previledgeAccess == 1) {
+                        echo "Section and Derivatives";
+                      }
+                     ?></td>
+                  </tr>
+                  <tr>
+                    <td style="width: 200px"><b>Downloaded</td>
+                    <td><?php 
+                      $downloaded = 0;
+                      foreach ($downloadedFile as $key) {
+                        $downloaded = $key->totalDownload;
+                      }
+                      echo $downloaded;
+                    ?>
+                      <a style="color: currentColor;" href="#" data-toggle="modal" data-target="#modal-view-download">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        <?php 
+          }
+        ?>
+        </section>
+        <section class="content">
+          <div class="row">
+            <div class="col-md-12">
+              <ul class="timeline">
+                <?php 
+                // var_dump($parentFile);
+                if (!empty($comment)) {?>
+                  <li class="time-label">
+                    <span class="bg-green">
+                      Comment
+                    </span>
+                  </li>
+                  <?php foreach ($comment as $key) {?>
+                    <li>
+                      <i class="fa fa-comments bg-yellow"></i>
+                      <div class="timeline-item">
+                        <span class="time"><i class="fa fa-clock-o"></i> <?php echo $key->uploadTime ?></span>
+                        <span class="time"><i class="fa fa-calendar"></i> <?php echo $key->uploadDate ?></span>
+                        <h3 class="timeline-header"><a href="#"><?php echo $key->fullname;?></a> comment this file</h3>
+                        <div class="timeline-body">
+                          <p><?php echo $key->comment;?></p>
+                        </div>
+                      </div>
+                    </li>
+                  <?php
+                  }
+                }
+                ?>
+                  <li class="time-label">
+                    <span class="bg-red">
+                      File Uploaded
+                    </span>
+                  </li>
+                  <?php 
+                  if (!empty($parentFile)) {
+                    foreach ($selectedFile as $key) {?>
+                      <li>
+                        <i class="fa fa-user bg-aqua"></i>
+                        <div class="timeline-item">
+                          <span class="time"><i class="fa fa-clock-o"></i><?php echo $key->uploadTime; ?></span>
+                          <span class="time"><i class="fa fa-calendar"></i> <?php echo $key->uploadDate ?></span>
+                          <h3 class="timeline-header no-border"><b>
+                            <?php 
+                              echo $key->first_name;
+                              echo " ";
+                              echo $key->last_name;
+                            ?>
+                          </b>
+                             update with this file    
+                          </h3>
+                        </div>
+                      </li>
+                    <?php
+                    } 
+                    foreach ($parentFile as $oldFile) {?>
+                    <li>
+                      <i class="fa fa-user bg-aqua"></i>
+                      <div class="timeline-item">
+                        <span class="time"><i class="fa fa-clock-o"></i><?php echo $oldFile->uploadTime; ?></span>
+                        <span class="time"><i class="fa fa-calendar"></i> <?php echo $oldFile->uploadDate ?></span>
+                        <h3 class="timeline-header no-border"><b>
+                          <?php 
+                            echo $key->first_name;
+                            echo " ";
+                            echo $key->last_name;
+                          ?>
+                        </b>
+                            upload <a href="<?php echo base_url();?>controller_creator/infoFile/<?php echo $oldFile->id_file?>"><?php echo $oldFile->fileNameNoDateTime;?></a> 
+                          </h3>
+                        </div>
+                      </li>
+                      <?php
+                      }
+                    }elseif (empty($parentFile)) {
+                      foreach ($selectedFile as $key) {?>
+                      <li>
+                        <i class="fa fa-user bg-aqua"></i>
+                        <div class="timeline-item">
+                          <span class="time"><i class="fa fa-clock-o"></i><?php echo $key->uploadTime; ?></span>
+                          <span class="time"><i class="fa fa-calendar"></i> <?php echo $key->uploadDate ?></span>
+                          <h3 class="timeline-header no-border"><b>
+                            <?php 
+                              echo $key->first_name;
+                              echo " ";
+                              echo $key->last_name;
+                            ?>
+                          </b>
+                              upload this file    
+                          </h3>
+                        </div>
+                      </li>
+                    <?php
+                    }
+                  }
+                ?>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="modal fade" id="modal-view-download">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title">User Downloaded File</h4>
+            </div>
+            <div class="modal-content">
+              <table class="table table-bordered table-striped" id="mytable">
+                <thead>
+                  <tr>
+                    <th>Id Employee</th>
+                    <th>Full Name</th>
+                    <th>Download Date</th>
+                    <th>Download Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php 
+                    $downloaded = 0;
+                    foreach ($downloadedFile as $key) {
+                      $downloaded = $key->totalDownload;
+                    }
+                    if ($downloaded != 0) { 
+                      foreach ($downloadedFile as $key) {?>
+                        <tr>
+                          <td><?php echo $key->id_employee ?></td>
+                          <td><?php echo $key->full_name ?></td>
+                          <td><?php echo $key->downloadDate ?></td>
+                          <td><?php echo $key->downloadTime ?></td>
+                        </tr>
+                  <?php                        
+                      }
+                    }
+                  ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+  <?php
+    include('footer.html');
+  ?>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 3 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Select2 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/select2/dist/js/select2.full.min.js"></script>
+<!-- InputMask -->
+<script src="<?php echo base_url();?>assets/admin/plugins/input-mask/jquery.inputmask.js"></script>
+<script src="<?php echo base_url();?>assets/admin/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+<script src="<?php echo base_url();?>assets/admin/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+<!-- date-range-picker -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/moment/min/moment.min.js"></script>
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+<!-- bootstrap datepicker -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<!-- bootstrap color picker -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+<!-- bootstrap time picker -->
+<script src="<?php echo base_url();?>assets/admin/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+<!-- SlimScroll -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<!-- iCheck 1.0.1 -->
+<script src="<?php echo base_url();?>assets/admin/plugins/iCheck/icheck.min.js"></script>
+<!-- FastClick -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/fastclick/lib/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="<?php echo base_url();?>assets/admin/dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="<?php echo base_url();?>assets/admin/dist/js/demo.js"></script>
+<!-- Fancy Box -->
+<script src="<?php echo base_url();?>assets/js/fancybox/jquery.fancybox.pack.js"></script>
+<!-- Selector -->
+<script>
+  $(document).ready(function() {
+    $(".perbesar").fancybox();
+  });
+</script>
+<!-- Page script -->
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Datemask dd/mm/yyyy
+    $('#datemask').inputmask('yyyy-mm-dd', { 'placeholder': 'yyyy-mm-dd' })
+    //Datemask2 mm/dd/yyyy
+    $('#datemask2').inputmask('yyyy-mm-dd', { 'placeholder': 'yyyy-mm-dd' })
+    //Money Euro
+    $('[data-mask]').inputmask()
+
+    //Date range picker
+    $('#reservation').daterangepicker()
+    //Date range picker with time picker
+    $('#reservationtime').daterangepicker({ timePicker: true, timePickerIncrement: 30, format: 'yyyy-mm-dd h:mm A' })
+    //Date range as a button
+    $('#daterange-btn').daterangepicker(
+      {
+        ranges   : {
+          'Today'       : [moment(), moment()],
+          'Yesterday'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
+          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+          'This Month'  : [moment().startOf('month'), moment().endOf('month')],
+          'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        },
+        startDate: moment().subtract(29, 'days'),
+        endDate  : moment()
+      },
+      function (start, end) {
+        $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+      }
+    )
+
+    //Date picker
+    $('#datepicker').datepicker({
+      autoclose: true
+    })
+
+    //iCheck for checkbox and radio inputs
+    $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+      checkboxClass: 'icheckbox_minimal-blue',
+      radioClass   : 'iradio_minimal-blue'
+    })
+    //Red color scheme for iCheck
+    $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+      checkboxClass: 'icheckbox_minimal-red',
+      radioClass   : 'iradio_minimal-red'
+    })
+    //Flat red color scheme for iCheck
+    $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+      checkboxClass: 'icheckbox_flat-green',
+      radioClass   : 'iradio_flat-green'
+    })
+
+    //Colorpicker
+    $('.my-colorpicker1').colorpicker()
+    //color picker with addon
+    $('.my-colorpicker2').colorpicker()
+
+    //Timepicker
+    $('.timepicker').timepicker({
+      showInputs: false
+    })
+  })
+</script>
+<!-- data table -->
+<script>
+  $(document).ready(function() {
+     var dataSrc = [];
+
+     var table = $('#mytable').DataTable({
+        'initComplete': function(){
+           var api = this.api();
+
+           // Populate a dataset for autocomplete functionality
+           // using data from first, second and third columns
+           api.cells('tr', [0, 1, 2]).every(function(){
+              // Get cell data as plain text
+              var data = $('<div>').html(this.data()).text();           
+              if(dataSrc.indexOf(data) === -1){ dataSrc.push(data); }
+           });
+           
+           // Sort dataset alphabetically
+           dataSrc.sort();
+          
+           // Initialize Typeahead plug-in
+           $('.dataTables_filter input[type="search"]', api.table().container())
+              .typeahead({
+                 source: dataSrc,
+                 afterSelect: function(value){
+                    api.search(value).draw();
+                 }
+              }
+           );
+        }
+     });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>E-Filling | Creator</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/font-awesome/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/Ionicons/css/ionicons.min.css">
+  <!-- daterange picker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap-daterangepicker/daterangepicker.css">
+  <!-- bootstrap datepicker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/plugins/iCheck/all.css">
+  <!-- Bootstrap Color Picker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+  <!-- Bootstrap time Picker -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/plugins/timepicker/bootstrap-timepicker.min.css">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/bower_components/select2/dist/css/select2.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/dist/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/dist/css/skins/_all-skins.min.css">
+  <!-- Google Font -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/admin/https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <!-- Fancybox -->
+  <link rel="stylesheet" href="<?php echo base_url();?>assets/js/fancybox/jquery.fancybox.css">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+  <?php
+    include ('header.html');
+  ?>
+  <!-- Sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="header">MAIN NAVIGATION</li>
+        <li>
+          <a href="<?php echo base_url();?>controller_creator/sidebar/home">
+            <i class="fa fa-home"></i> <span>Home</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+        </li>
+        <li class="active">
+          <a href="<?php echo base_url();?>controller_creator/sidebar/data">
+            <i class="fa fa-folder-open"></i> <span>Data Management</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-right pull-right"></i>
+            </span>
+          </a>
+        </li>
+        <li> 
+          <a href="<?php echo base_url();?>controller_creator/sidebar/notes">
+            <i class="fa fa-comments"></i> <span>Notes</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="<?php echo base_url();?>controller_creator/sidebar/logout">
+            <i class="fa fa-power-off"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Main content -->
+    <section class="content">
+      <div class="box box-default">
+        <div class="box-header with-border">
+            <?php 
+            foreach ($thisFolder as $key) { ?>
+              <h3 class="box-title"><?php echo $key->folder;?> </h3>
+              <button style="margin-left: 10px" type="button" class="btn btn-box-tool btn-default pull-right" data-toggle="modal" data-target="#modal-default"><i class="fa fa-file"></i> Upload File</button>
+              <button type="button" class="btn btn-box-tool btn-default pull-right" data-toggle="modal" data-target="#modal-request"><i class="fa fa-gears"></i> Request</button>
+              <!-- uploadFile -->
+              <div class="modal fade" id="modal-default">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                      <h4 class="modal-title">Upload File to <?php echo $key->folder;?></h4>
+                    </div>
+                    <!-- Upload File Modal-->
+                    <?php echo form_open_multipart("controller_creator/uploadFile/$key->id_folder");?>
+                      <div class="modal-body">
+                        <div class="form-group">
+                          <label>File Number ID</label>
+                          <input type="text" class="form-control" name="fileName" disabled="" placeholder="x">
+                        </div>
+                        <div class="form-group">
+                          <label>File Name</label>
+                          <input type="text" class="form-control" name="fileName" placeholder="Enter File Name" required>
+                        </div>
+                        <div class="form-group">
+                          <label>Expired Date</label>
+                          <div class="input-group date">
+                            <div class="input-group-addon">
+                              <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" class="form-control pull-right" name="expiredDate" id="datepicker" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd">
+                          </div>
+                          <!-- /.input group -->
+                        </div>
+                        <div class="form-group">
+                          <label>Revision</label>
+                          <input type="number" class="form-control" name="revision" placeholder="Number of revision">
+                        </div>
+                        <div class="form-group">
+                          <label>Select Access</label>
+                          <select class="form-control" name="access" required>
+                            <option value="3">on Directorate</option>
+                            <option value="2">on Department</option>
+                            <option value="1">on Section</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleInputFile">File input</label>
+                          <input type="file" name="userfile" required />
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <input type="submit" value="Upload" class="btn btn-primary"/>
+                        <!-- <button type="button" class="btn btn-primary">Upload</button> -->
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <!-- requestFolder -->
+              <div class="modal fade" id="modal-request">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                      <h4 class="modal-title">Request</h4>
+                    </div>
+                    <!-- Request (Folder) Modal -->
+                    <?php echo form_open_multipart("controller_creator/request/$key->id_folder");?>
+                      <div class="modal-body">
+                        <div class="alert alert-info alert-dismissible">
+                          Every request will be delivered to admin. Please wait for admin to response on your request.
+                        </div>
+                        <div class="form-group">
+                          <div class="radio">
+                            <label>
+                              <input type="radio" name="options" id="optionsRadios1" value="1">
+                              Add New Folder
+                              <input type="text" class="form-control" name="newFolderName" placeholder="Enter Folder Name">
+                            </label>
+                          </div>
+                          <div class="radio">
+                            <label>
+                              <input type="radio" name="options" id="optionsRadios1" value="2">
+                                Change this Folder Name
+                              <input type="text" class="form-control" name="changeFolderName" placeholder="Enter New Name">
+                            </label>
+                          </div>
+                          <div class="radio">
+                            <label>
+                              <input type="radio" name="options" id="optionsRadios2" value="3">
+                              Remove this Folder
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <input type="submit" value="Do Request" class="btn btn-primary"/>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            <?php
+            }
+            ?>
+        </div>
+        <div class="box-body">
+          <?php 
+            foreach ($childFolder as $key) { ?>
+              <a href="<?php echo base_url();?>controller_creator/openFolder/<?php echo $key->id_folder; ?>">
+                <div class="alert alert-info alert-dismissible">
+                  <h4><i class="icon fa fa-folder"></i> <?php echo $key->folder; ?></h4>
+                </div>                
+              </a>
+          <?php
+            }
+          ?>
+          <!-- PDF File -->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="box-header with-border">
+                <h4 class="box-title">
+                  PDF File
+                </h4>
+              </div>
+              <div class="box-body">
+                <?php
+                $count = 1;
+                foreach ($file as $key) {
+                  $text = $key->fileNameNoDateTime;
+                  $file_name = explode(".", $text);
+                  $file_extension = end($file_name);
+                  if ($file_extension == "pdf") {?>
+                    <div class="col-lg-3 col-xs-6">
+                      <a class="small-box bg-red" href="<?php echo base_url();?>controller_creator/openFile/<?php echo $key->fileNameNoExtension?>" target="_blank"> 
+                        <div class="small-box bg-red">
+                          <div class="inner">
+                            <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                            <br>
+                            <div>
+                              <a href="<?php echo base_url();?>controller_creator/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs">Info</a>
+                              <?php if ($key->id_uploader == $_SESSION["id_employee"]) {?>
+                                <a href="#" data-toggle="modal" data-target="#modal-delete<?php echo $count;?>" class="btn btn-danger btn-xs">Delete</a>
+                                <a href="#" data-toggle="modal" data-target="#modal-default<?php echo $count;?>" class="btn btn-warning btn-xs">Update</a>
+                              <?php } ?>
+                            </div>
+                          </div>
+                          <div class="icon">
+                            <i class="fa fa-file-pdf-o"></i>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                    <!-- Modal for Update File -->
+                    <div class="modal fade" id="modal-default<?php echo $count;?>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Update File <?php echo $key->fileNameNoDateTime;?></h4>
+                          </div>
+                          <?php echo form_open_multipart("controller_creator/updateFile/$key->id_folder/$key->id_file");?>
+                            <div class="modal-body">
+                              <div class="form-group">
+                                <label>File Number ID</label>
+                                <input type="text" class="form-control" name="fileName" disabled="" 
+                                placeholder="x">
+                              </div>
+                              <div class="form-group">
+                                <label>File Name</label>
+                                <input type="text" class="form-control" name="fileName" placeholder="Enter File Name" required>
+                              </div>
+                              <div class="form-group">
+                                <label>Expired Date</label>
+                                <div class="input-group date">
+                                  <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                  </div>
+                                  <input type="text" class="form-control pull-right" name="expiredDate" id="datepicker" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd">
+                                </div>
+                                <!-- /.input group -->
+                              </div>
+                              <div class="form-group">
+                                <label>Revision</label>
+                                <input type="number" class="form-control" name="revision" placeholder="Number of revision">
+                              </div>
+                              <div class="form-group">
+                                <label>Select Access</label>
+                                <select class="form-control" name="access" required>
+                                  <option value="3">on Directorate</option>
+                                  <option value="2">on Department</option>
+                                  <option value="1">on Section</option>
+                                </select>
+                              </div>
+                              <div class="form-group">
+                                <label for="exampleInputFile">File input</label>
+                                <input type="file" name="userfile" required />
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <input type="submit" value="Upload" class="btn btn-primary"/>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Modal for delete file -->
+                    <div class="modal fade" id="modal-delete<?php echo $count;?>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Are you sure want to delete <?php echo $key->fileNameNoDateTime;?> ?</h4>
+                          </div>
+                          <?php echo form_open_multipart("controller_creator/deleteFile/$key->fileNameNoExtension");?>
+                            <div class="modal-body">
+                              <div class="form-group">
+                                <p>Once you delete this file, you can't recover it back.</p>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <input type="submit" value="Delete" class="btn btn-danger"/>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                <?php
+                  $count++;
+                    }
+                  }
+                ?>
+              </div>
+            </div>
+          </div>
+          <!-- MS Word File -->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="box-header with-border">
+                <h4 class="box-title">
+                  Ms.Word File
+                </h4>
+              </div>
+              <div class="box-body">
+                <?php
+                foreach ($file as $key) {
+                  $text = $key->fileNameNoDateTime;
+                  $file_name = explode(".", $text);
+                  $file_extension = end($file_name);
+                  if ($file_extension == "doc" || $file_extension == "docx") {?>
+                    <div class="col-lg-3 col-xs-6">
+                      <a class="small-box bg-blue" href="<?php echo base_url();?>controller_creator/openFile/<?php echo $key->fileNameNoExtension?>" target="_blank"> 
+                        <div class="small-box bg-blue">
+                          <div class="inner">
+                            <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                            <br>
+                            <div>
+                              <a href="<?php echo base_url();?>controller_creator/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs">Info</a>
+                              <?php if ($key->id_uploader == $_SESSION["id_employee"]) {?>
+                                <a href="#" data-toggle="modal" data-target="#modal-delete<?php echo $count;?>" class="btn btn-danger btn-xs">Delete</a>
+                                <a href="#" data-toggle="modal" data-target="#modal-default<?php echo $count;?>" class="btn btn-warning btn-xs">Update</a>
+                              <?php } ?>
+                            </div>
+                          </div>
+                          <div class="icon">
+                            <i class="fa fa-file-word-o"></i>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                    <!-- Modal for Update File -->
+                    <div class="modal fade" id="modal-default<?php echo $count;?>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Update File <?php echo $key->fileNameNoDateTime;?></h4>
+                          </div>
+                          <?php 
+                            echo form_open_multipart("controller_creator/updateFile/$key->id_folder/$key->id_file");?>
+                              <div class="modal-body">
+                                <div class="form-group">
+                                  <label>File Number ID</label>
+                                  <input type="text" class="form-control" name="fileName" disabled="" 
+                                  placeholder="x">
+                                </div>
+                                <div class="form-group">
+                                  <label>File Name</label>
+                                  <input type="text" class="form-control" name="fileName" placeholder="Enter File Name" required>
+                                </div>
+                                <div class="form-group">
+                                  <label>Expired Date</label>
+                                  <div class="input-group date">
+                                    <div class="input-group-addon">
+                                      <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input type="text" class="form-control pull-right" name="expiredDate" id="datepicker" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd">
+                                  </div>
+                                  <!-- /.input group -->
+                                </div>
+                                <div class="form-group">
+                                  <label>Revision</label>
+                                  <input type="number" class="form-control" name="revision" placeholder="Number of revision">
+                                </div>
+                                <div class="form-group">
+                                  <label>Select Access</label>
+                                  <select class="form-control" name="access" required>
+                                    <option value="3">on Directorate</option>
+                                    <option value="2">on Department</option>
+                                    <option value="1">on Section</option>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <label for="exampleInputFile">File input</label>
+                                  <input type="file" name="userfile" required />
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <input type="submit" value="Upload" class="btn btn-primary"/>
+                              </div>
+                            </form>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Modal for delete file -->
+                    <div class="modal fade" id="modal-delete<?php echo $count;?>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Are you sure want to delete <?php echo $key->fileNameNoDateTime;?> ?</h4>
+                          </div>
+                          <?php echo form_open_multipart("controller_creator/deleteFile/$key->fileNameNoExtension");?>
+                            <div class="modal-body">
+                              <div class="form-group">
+                                <p>Once you delete this file, you can't recover it back.</p>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <input type="submit" value="Delete" class="btn btn-danger"/>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                <?php
+                  $count++;
+                  }
+                }
+                ?>
+              </div>
+            </div>
+          </div>
+          <!-- Ms Excel File -->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="box-header with-border">
+                <h4 class="box-title">
+                  Ms.Excel File
+                </h4>
+              </div>
+              <div class="box-body">
+                <?php
+                foreach ($file as $key) {
+                  $text = $key->fileNameNoDateTime;
+                  $file_name = explode(".", $text);
+                  $file_extension = end($file_name);
+                  if ($file_extension == "xls" || $file_extension == "xlsx") {?>
+                    <div class="col-lg-3 col-xs-6">
+                      <a class="small-box bg-green" href="<?php echo base_url();?>controller_creator/openFile/<?php echo $key->fileNameNoExtension?>" target="_blank"> 
+                        <div class="small-box bg-green">
+                          <div class="inner">
+                            <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                            <br>
+                            <div>
+                              <a href="<?php echo base_url();?>controller_creator/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs">Info</a>
+                              <?php if ($key->id_uploader == $_SESSION["id_employee"]) {?>
+                                <a href="#" data-toggle="modal" data-target="#modal-delete<?php echo $count;?>" class="btn btn-danger btn-xs">Delete</a>
+                                <a href="#" data-toggle="modal" data-target="#modal-default<?php echo $count;?>" class="btn btn-warning btn-xs">Update</a>
+                              <?php } ?>
+                            </div>
+                          </div>
+                          <div class="icon">
+                            <i class="fa fa-file-excel-o"></i>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                    <!-- Modal for Update File -->
+                    <div class="modal fade" id="modal-default<?php echo $count;?>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Update File <?php echo $key->fileNameNoDateTime;?></h4>
+                          </div>
+                          <?php 
+                            echo form_open_multipart("controller_creator/updateFile/$key->id_folder/$key->id_file");?>
+                              <div class="modal-body">
+                                <div class="form-group">
+                                  <label>File Number ID</label>
+                                  <input type="text" class="form-control" name="fileName" disabled="" 
+                                  placeholder="x">
+                                </div>
+                                <div class="form-group">
+                                  <label>File Name</label>
+                                  <input type="text" class="form-control" name="fileName" placeholder="Enter File Name" required>
+                                </div>
+                                <div class="form-group">
+                                  <label>Expired Date</label>
+                                  <div class="input-group date">
+                                    <div class="input-group-addon">
+                                      <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input type="text" class="form-control pull-right" name="expiredDate" id="datepicker" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd">
+                                  </div>
+                                  <!-- /.input group -->
+                                </div>
+                                <div class="form-group">
+                                  <label>Revision</label>
+                                  <input type="number" class="form-control" name="revision" placeholder="Number of revision">
+                                </div>
+                                <div class="form-group">
+                                  <label>Select Access</label>
+                                  <select class="form-control" name="access" required>
+                                    <option value="3">on Directorate</option>
+                                    <option value="2">on Department</option>
+                                    <option value="1">on Section</option>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <label for="exampleInputFile">File input</label>
+                                  <input type="file" name="userfile" required />
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <input type="submit" value="Upload" class="btn btn-primary"/>
+                              </div>
+                            </form>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Modal for delete file -->
+                    <div class="modal fade" id="modal-delete<?php echo $count;?>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Are you sure want to delete <?php echo $key->fileNameNoDateTime;?> ?</h4>
+                          </div>
+                          <?php echo form_open_multipart("controller_creator/deleteFile/$key->fileNameNoExtension");?>
+                            <div class="modal-body">
+                              <div class="form-group">
+                                <p>Once you delete this file, you can't recover it back.</p>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <input type="submit" value="Delete" class="btn btn-danger"/>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                <?php
+                  $count++;
+                  }
+                }
+                ?>
+              </div>
+            </div>
+          </div>
+          <!-- Ms Power Point File -->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="box-header with-border">
+                <h4 class="box-title">
+                  Ms.Powerpoint File
+                </h4>
+              </div>
+              <div class="box-body">
+                <?php
+                foreach ($file as $key) {
+                  $text = $key->fileNameNoDateTime;
+                  $file_name = explode(".", $text);
+                  $file_extension = end($file_name);
+                  if ($file_extension == "ppt" || $file_extension == "pptx") {?>
+                    <div class="col-lg-3 col-xs-6">
+                      <a class="small-box bg-orange" href="<?php echo base_url();?>controller_creator/openFile/<?php echo $key->fileNameNoExtension?>" target="_blank"> 
+                        <div class="small-box bg-orange">
+                          <div class="inner">
+                            <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                            <br>
+                            <div>
+                              <a href="<?php echo base_url();?>controller_creator/infoFile/<?php echo $key->id_file?>" class="btn btn-primary btn-xs">Info</a>
+                              <?php if ($key->id_uploader == $_SESSION["id_employee"]) {?>
+                                <a href="#" data-toggle="modal" data-target="#modal-delete<?php echo $count;?>" class="btn btn-danger btn-xs">Delete</a>
+                                <a href="#" data-toggle="modal" data-target="#modal-default<?php echo $count;?>" class="btn btn-warning btn-xs">Update</a>
+                              <?php } ?>
+                            </div>
+                          </div>
+                          <div class="icon">
+                            <i class="fa fa-file-powerpoint-o"></i>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                    <!-- Modal for Update File -->
+                    <div class="modal fade" id="modal-default<?php echo $count;?>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Update File <?php echo $key->fileNameNoDateTime;?></h4>
+                          </div>
+                          <?php 
+                            echo form_open_multipart("controller_creator/updateFile/$key->id_folder/$key->id_file");?>
+                              <div class="modal-body">
+                                <div class="form-group">
+                                  <label>File Number ID</label>
+                                  <input type="text" class="form-control" name="fileName" disabled="" 
+                                  placeholder="x">
+                                </div>
+                                <div class="form-group">
+                                  <label>File Name</label>
+                                  <input type="text" class="form-control" name="fileName" placeholder="Enter File Name" required>
+                                </div>
+                                <div class="form-group">
+                                  <label>Expired Date</label>
+                                  <div class="input-group date">
+                                    <div class="input-group-addon">
+                                      <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input type="text" class="form-control pull-right" name="expiredDate" id="datepicker" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd">
+                                  </div>
+                                  <!-- /.input group -->
+                                </div>
+                                <div class="form-group">
+                                  <label>Revision</label>
+                                  <input type="number" class="form-control" name="revision" placeholder="Number of revision">
+                                </div>
+                                <div class="form-group">
+                                  <label>Select Access</label>
+                                  <select class="form-control" name="access" required>
+                                    <option value="3">on Directorate</option>
+                                    <option value="2">on Department</option>
+                                    <option value="1">on Section</option>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <label for="exampleInputFile">File input</label>
+                                  <input type="file" name="userfile" required />
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <input type="submit" value="Upload" class="btn btn-primary"/>
+                              </div>
+                            </form>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Modal for delete file -->
+                    <div class="modal fade" id="modal-delete<?php echo $count;?>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Are you sure want to delete <?php echo $key->fileNameNoDateTime;?> ?</h4>
+                          </div>
+                          <?php echo form_open_multipart("controller_creator/deleteFile/$key->fileNameNoExtension");?>
+                            <div class="modal-body">
+                              <div class="form-group">
+                                <p>Once you delete this file, you can't recover it back.</p>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <input type="submit" value="Delete" class="btn btn-danger"/>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                <?php
+                  $count++;
+                  }
+                }
+                ?>
+              </div>
+            </div>
+          </div>
+          <!-- Image File -->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="box-header with-border">
+                <h4 class="box-title">
+                  Image File
+                </h4>
+              </div>
+              <div class="box-body">
+                <?php
+                foreach ($file as $key) {
+                  $text = $key->fileNameNoDateTime;
+                  $file_name = explode(".", $text);
+                  $file_extension = end($file_name);
+                  if ($file_extension == "png" || $file_extension == "jpeg" || $file_extension == "jpg") { ?>
+                      <div class="col-lg-3 col-xs-6">
+                        <?php $key->fileName = str_replace(" ", "_", $key->fileName); ?>
+                        <a class="small-box bg-yellow perbesar" href="<?php echo base_url();?>./storedFile/images/<?php echo $key->fileName ?>" target="_blank"> 
+                          <div class="small-box bg-yellow">
+                            <div class="inner">
+                              <h4><?php echo $key->fileNameNoDateTime ?></h4>
+                            </div>
+                            <div class="icon">
+                              <img src="<?php echo base_url();?>./storedFile/images/<?php echo $key->fileName ?>" height="80" width="80">
+                            </div>
+                            <a href="<?php echo base_url();?>controller_creator/infoFile/<?php echo $key->id_file?>" class="small-box-footer" target="_blank">
+                              <div class="small-box-footer"><i class="fa fa-info-circle"></i> Info </div>                              
+                            </a>
+                            <?php if ($key->id_uploader == $_SESSION["id_employee"]) {?>
+                              <a href="#" data-toggle="modal" data-target="#modal-delete<?php echo $count;?>" class="small-box-footer">
+                                <div class="small-box-footer"><i class="fa fa-trash"></i> Delete </div>                              
+                              </a>
+                              <a href="#" data-toggle="modal" data-target="#modal-default<?php echo $count;?>" class="small-box-footer">
+                                <div class="small-box-footer"><i class="fa fa-edit"></i> Update </div>                              
+                              </a>
+                            <?php } ?>                          
+                          </div>
+                        </a>
+                      </div>
+                      <!-- Modal for Update File -->
+                      <div class="modal fade" id="modal-default<?php echo $count;?>">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                              <h4 class="modal-title">Update File <?php echo $key->fileNameNoDateTime;?></h4>
+                            </div>
+                            <?php 
+                              echo form_open_multipart("controller_creator/updateFile/$key->id_folder/$key->id_file");?>
+                                <div class="modal-body">
+                                  <div class="form-group">
+                                    <label>File Number ID</label>
+                                    <input type="text" class="form-control" name="fileName" disabled="" 
+                                    placeholder="x">
+                                  </div>
+                                  <div class="form-group">
+                                    <label>File Name</label>
+                                    <input type="text" class="form-control" name="fileName" placeholder="Enter File Name" required>
+                                  </div>
+                                  <div class="form-group">
+                                    <label>Expired Date</label>
+                                    <div class="input-group date">
+                                      <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                      </div>
+                                      <input type="text" class="form-control pull-right" name="expiredDate" id="datepicker" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd">
+                                    </div>
+                                    <!-- /.input group -->
+                                  </div>
+                                  <div class="form-group">
+                                    <label>Revision</label>
+                                    <input type="number" class="form-control" name="revision" placeholder="Number of revision">
+                                  </div>
+                                  <div class="form-group">
+                                    <label>Select Access</label>
+                                    <select class="form-control" name="access" required>
+                                      <option value="3">on Directorate</option>
+                                      <option value="2">on Department</option>
+                                      <option value="1">on Section</option>
+                                    </select>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="exampleInputFile">File input</label>
+                                    <input type="file" name="userfile" required />
+                                  </div>
+                                </div>
+                                <div class="modal-footer">
+                                  <input type="submit" value="Upload" class="btn btn-primary"/>
+                                </div>
+                              </form>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Modal for delete file -->
+                      <div class="modal fade" id="modal-delete<?php echo $count;?>">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                              <h4 class="modal-title">Are you sure want to delete <?php echo $key->fileNameNoDateTime;?> ?</h4>
+                            </div>
+                            <?php echo form_open_multipart("controller_creator/deleteFile/$key->fileNameNoExtension");?>
+                              <div class="modal-body">
+                                <div class="form-group">
+                                  <p>Once you delete this file, you can't recover it back.</p>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <input type="submit" value="Delete" class="btn btn-danger"/>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                  <?php
+                  $count++;
+                    }
+                  }
+                ?>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- /.content-wrapper -->
+  <?php
+    include('footer.html');
+  ?>
+</div>
+<!-- ./wrapper -->
+
+
+<!-- jQuery 3 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Select2 -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/select2/dist/js/select2.full.min.js"></script>
+<!-- InputMask -->
+<script src="<?php echo base_url();?>assets/admin/plugins/input-mask/jquery.inputmask.js"></script>
+<script src="<?php echo base_url();?>assets/admin/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+<script src="<?php echo base_url();?>assets/admin/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+<!-- date-range-picker -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/moment/min/moment.min.js"></script>
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+<!-- bootstrap datepicker -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<!-- bootstrap color picker -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+<!-- bootstrap time picker -->
+<script src="<?php echo base_url();?>assets/admin/plugins/timepicker/bootstrap-timepicker.min.js"></script>
+<!-- SlimScroll -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<!-- iCheck 1.0.1 -->
+<script src="<?php echo base_url();?>assets/admin/plugins/iCheck/icheck.min.js"></script>
+<!-- FastClick -->
+<script src="<?php echo base_url();?>assets/admin/bower_components/fastclick/lib/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="<?php echo base_url();?>assets/admin/dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="<?php echo base_url();?>assets/admin/dist/js/demo.js"></script>
+<!-- Fancy Box -->
+<script src="<?php echo base_url();?>assets/js/fancybox/jquery.fancybox.pack.js"></script>
+<!-- Selector -->
+<script>
+  $(document).ready(function() {
+    $(".perbesar").fancybox();
+  });
+</script>
+<!-- Page script -->
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Datemask dd/mm/yyyy
+    $('#datemask').inputmask('yyyy-mm-dd', { 'placeholder': 'yyyy-mm-dd' })
+    //Datemask2 mm/dd/yyyy
+    $('#datemask2').inputmask('yyyy-mm-dd', { 'placeholder': 'yyyy-mm-dd' })
+    //Money Euro
+    $('[data-mask]').inputmask()
+
+    //Date range picker
+    $('#reservation').daterangepicker()
+    //Date range picker with time picker
+    $('#reservationtime').daterangepicker({ timePicker: true, timePickerIncrement: 30, format: 'yyyy-mm-dd h:mm A' })
+    //Date range as a button
+    $('#daterange-btn').daterangepicker(
+      {
+        ranges   : {
+          'Today'       : [moment(), moment()],
+          'Yesterday'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
+          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+          'This Month'  : [moment().startOf('month'), moment().endOf('month')],
+          'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        },
+        startDate: moment().subtract(29, 'days'),
+        endDate  : moment()
+      },
+      function (start, end) {
+        $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+      }
+    )
+
+    //Date picker
+    $('#datepicker').datepicker({
+      autoclose: true
+    })
+
+    //iCheck for checkbox and radio inputs
+    $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+      checkboxClass: 'icheckbox_minimal-blue',
+      radioClass   : 'iradio_minimal-blue'
+    })
+    //Red color scheme for iCheck
+    $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+      checkboxClass: 'icheckbox_minimal-red',
+      radioClass   : 'iradio_minimal-red'
+    })
+    //Flat red color scheme for iCheck
+    $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+      checkboxClass: 'icheckbox_flat-green',
+      radioClass   : 'iradio_flat-green'
+    })
+
+    //Colorpicker
+    $('.my-colorpicker1').colorpicker()
+    //color picker with addon
+    $('.my-colorpicker2').colorpicker()
+
+    //Timepicker
+    $('.timepicker').timepicker({
+      showInputs: false
+    })
+  })
+</script>
+</body>
+</html>
